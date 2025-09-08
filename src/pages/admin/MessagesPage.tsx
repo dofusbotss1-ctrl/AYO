@@ -297,9 +297,66 @@ const MessagesPage: React.FC = () => {
               <div className="p-6">
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">Message:</h3>
                 <div className="bg-gray-50 rounded-lg p-4">
-                  <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                    {selectedMessage.message}
-                  </p>
+                  <div className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+                    {selectedMessage.message.split('\n').map((line, index) => {
+                      // Détecter les titres (lignes en majuscules ou avec des séparateurs)
+                      if (line.match(/^[A-Z\s]+:?$/) || line.match(/^=+$/)) {
+                        return (
+                          <div key={index} className="font-bold text-blue-800 text-lg mt-4 mb-2">
+                            {line}
+                          </div>
+                        );
+                      }
+                      
+                      // Détecter les lignes de produits (commencent par un numéro)
+                      if (line.match(/^\d+\./)) {
+                        return (
+                          <div key={index} className="font-semibold text-gray-800 mt-3 mb-1 bg-blue-50 p-2 rounded">
+                            {line}
+                          </div>
+                        );
+                      }
+                      
+                      // Détecter les détails de produits (commencent par des espaces et tiret)
+                      if (line.match(/^\s+-/)) {
+                        return (
+                          <div key={index} className="text-gray-600 ml-4 text-sm">
+                            {line.trim()}
+                          </div>
+                        );
+                      }
+                      
+                      // Détecter le total
+                      if (line.includes('TOTAL DE LA COMMANDE')) {
+                        return (
+                          <div key={index} className="font-bold text-green-700 text-xl mt-4 p-3 bg-green-50 rounded-lg border border-green-200">
+                            {line}
+                          </div>
+                        );
+                      }
+                      
+                      // Détecter les informations client
+                      if (line.includes('Client:') || line.includes('Email:') || line.includes('Téléphone:') || line.includes('Adresse:')) {
+                        return (
+                          <div key={index} className="font-medium text-gray-800 bg-amber-50 p-2 rounded mb-1">
+                            {line}
+                          </div>
+                        );
+                      }
+                      
+                      // Lignes normales
+                      if (line.trim()) {
+                        return (
+                          <div key={index} className="mb-1">
+                            {line}
+                          </div>
+                        );
+                      }
+                      
+                      // Lignes vides
+                      return <div key={index} className="mb-2"></div>;
+                    })}
+                  </div>
                 </div>
 
                 {/* Product Info if applicable */}
