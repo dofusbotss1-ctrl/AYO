@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MessageSquare, Eye, Trash2, Mail, User, Calendar, Package, Phone, Send, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
+import { MessageSquare, Eye, Trash2, Mail, User, Calendar, Package, Phone, Send, CheckCircle, XCircle, ArrowLeft, MessageCircle } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { ContactMessage } from '../../types';
 
