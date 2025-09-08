@@ -243,14 +243,20 @@ const MessagesPage: React.FC = () => {
                       {selectedMessage.orderStatus && (
                         <div className="flex items-center space-x-2">
                           {selectedMessage.orderStatus === 'sent' && <Send className="w-4 h-4 text-blue-500" />}
+                          {selectedMessage.orderStatus === 'pending' && <MessageCircle className="w-4 h-4 text-yellow-500" />}
+                          {selectedMessage.orderStatus === 'pending' && <MessageCircle className="w-3 h-3 text-yellow-500" />}
                           {selectedMessage.orderStatus === 'received' && <CheckCircle className="w-4 h-4 text-green-500" />}
                           {selectedMessage.orderStatus === 'cancelled' && <XCircle className="w-4 h-4 text-red-500" />}
                           <span className={`${
                             selectedMessage.orderStatus === 'sent' ? 'text-blue-600' :
+                            selectedMessage.orderStatus === 'pending' ? 'text-yellow-600' :
+                            selectedMessage.orderStatus === 'pending' ? 'text-yellow-600' :
                             selectedMessage.orderStatus === 'received' ? 'text-green-600' :
                             'text-red-600'
                           }`}>
                             Statut: {selectedMessage.orderStatus === 'sent' ? 'Devis envoyé' :
+                                   selectedMessage.orderStatus === 'pending' ? 'Commande en attente' :
+                             selectedMessage.orderStatus === 'pending' ? 'Commande en attente' :
                                    selectedMessage.orderStatus === 'received' ? 'Commande reçue' :
                                    'Commande annulée'}
                             {selectedMessage.orderPrice && ` - ${selectedMessage.orderPrice} DH`}
@@ -379,43 +385,46 @@ const MessagesPage: React.FC = () => {
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">Actions:</h3>
                   
                   {/* Order Management */}
-                  {!selectedMessage.orderStatus && (
+                  {(!selectedMessage.orderStatus || selectedMessage.orderStatus === 'pending') && (
                     <div className="mb-6 p-4 bg-cyan-50 border border-cyan-200 rounded-lg">
-                      <h4 className="font-medium text-cyan-800 mb-3">Gestion de la commande:</h4>
+                      <h4 className="font-medium text-cyan-800 mb-3">
+                        {selectedMessage.orderStatus === 'pending' ? 'Traiter la commande:' : 'Gestion de la commande:'}
+                      </h4>
                       <div className="flex flex-wrap gap-3">
                         <button
                           onClick={() => setShowPriceInput(true)}
                           className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center space-x-2"
                         >
                           <Send className="w-4 h-4" />
-                          <span>Envoyer devis</span>
+                          <span>{selectedMessage.orderStatus === 'pending' ? 'Confirmer commande' : 'Envoyer devis'}</span>
                         </button>
                         <button
                           onClick={() => handleOrderStatusChange(selectedMessage.id, 'cancelled')}
                           className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors flex items-center space-x-2"
                         >
                           <XCircle className="w-4 h-4" />
-                          <span>Client refuse</span>
+                          <span>{selectedMessage.orderStatus === 'pending' ? 'Refuser commande' : 'Client refuse'}</span>
                         </button>
                       </div>
                       
                       {showPriceInput && (
                         <div className="mt-4 p-3 bg-white border rounded-lg">
                           <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Prix de la commande (DH):
+                            {selectedMessage.orderStatus === 'pending' ? 'Confirmer le prix (DH):' : 'Prix de la commande (DH):'}
                           </label>
                           <div className="flex space-x-2">
                             <input
                               type="number"
                               value={orderPrice}
                               onChange={(e) => setOrderPrice(e.target.value)}
+                              defaultValue={selectedMessage.orderPrice?.toString() || ''}
                               className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
                               placeholder="Prix en DH"
                             />
                             <button
                               onClick={() => {
                                 if (orderPrice) {
-                                  handleOrderStatusChange(selectedMessage.id, 'sent', parseFloat(orderPrice));
+                                  handleOrderStatusChange(selectedMessage.id, 'received', parseFloat(orderPrice));
                                   setOrderPrice('');
                                   setShowPriceInput(false);
                                 }
