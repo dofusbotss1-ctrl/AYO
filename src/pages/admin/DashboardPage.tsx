@@ -41,9 +41,9 @@ const DashboardPage: React.FC = () => {
       exact: true
     },
     { 
-      path: '/admin/dashboard/trips', 
+      path: '/admin/dashboard/products', 
       icon: Package, 
-      label: 'Voyages' 
+      label: 'Figurines' 
     },
     { 
       path: '/admin/dashboard/categories', 
@@ -72,8 +72,8 @@ const DashboardPage: React.FC = () => {
 
   const stats = [
     {
-      title: 'Total Voyages',
-      value: state.trips ? state.trips.length : 0,
+      title: 'Total Figurines',
+      value: state.products ? state.products.length : 0,
       icon: Package,
       gradient: 'from-blue-500 to-cyan-600',
       bgGradient: 'from-blue-50 to-cyan-50'
@@ -93,7 +93,7 @@ const DashboardPage: React.FC = () => {
       bgGradient: 'from-teal-50 to-green-50'
     },
     {
-      title: 'Voyages Réservés',
+      title: 'Figurines Commandées',
       value: state.messages ? state.messages.filter(m => m.orderStatus === 'received').length : 0,
       icon: ShoppingBag,
       gradient: 'from-green-500 to-teal-600',
@@ -423,11 +423,11 @@ const DashboardPage: React.FC = () => {
                   <div className="space-y-6">
                     <div className="flex items-center justify-between p-6 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl hover:shadow-md transition-all duration-300">
                       <div className="flex items-center space-x-4">
-                        <Send className="w-5 h-5 lg:w-6 lg:h-6 text-amber-500" />
-                        <span className="text-sm lg:text-lg font-bold text-amber-700">Devis Envoyés</span>
+                        <CheckCircle className="w-5 h-5 lg:w-6 lg:h-6 text-green-500" />
+                        <span className="text-sm lg:text-lg font-bold text-green-700">Commandes Reçues</span>
                       </div>
                       <span className="text-xl lg:text-2xl font-bold text-amber-600">
-                        {state.messages ? state.messages.filter(m => m.orderStatus === 'sent').length : 0}
+                        {state.messages ? state.messages.filter(m => m.orderStatus === 'received').length : 0}
                       </span>
                     </div>
                     <div className="flex items-center justify-between p-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl hover:shadow-md transition-all duration-300">

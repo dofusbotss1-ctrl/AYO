@@ -11,7 +11,7 @@ import ContactPage from './pages/ContactPage';
 import CartPage from './pages/CartPage';
 import LoginPage from './pages/admin/LoginPage';
 import DashboardPage from './pages/admin/DashboardPage';
-import AdminProductsPage from './pages/admin/TripsPage';
+import AdminProductsPage from './pages/admin/ProductsPage';
 import CategoriesPage from './pages/admin/CategoriesPage';
 import MessagesPage from './pages/admin/MessagesPage';
 import SettingsPage from './pages/admin/SettingsPage';
@@ -74,7 +74,7 @@ function AppContent() {
             <DashboardPage />
           </ProtectedRoute>
         }>
-          <Route path="trips" element={<AdminProductsPage />} />
+          <Route path="products" element={<AdminProductsPage />} />
           <Route path="categories" element={<CategoriesPage />} />
           <Route path="messages" element={<MessagesPage />} />
           <Route path="settings" element={<SettingsPage />} />

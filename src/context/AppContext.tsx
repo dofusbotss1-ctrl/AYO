@@ -289,8 +289,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
         
         // Fallback to localStorage when Firebase fails
         const savedProducts = localStorage.getItem('ayoFigurine_products');
-        const savedCategories = localStorage.getItem('voyagePro_categories');
-        const savedMessages = localStorage.getItem('voyagePro_messages');
+        const savedCategories = localStorage.getItem('ayoFigurine_categories');
+        const savedMessages = localStorage.getItem('ayoFigurine_messages');
 
         if (savedProducts) {
           dispatch({
@@ -320,16 +320,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
           });
         } else {
           dispatch({ type: 'SET_MESSAGES', payload: [] });
-        }
-
-        if (savedMessages) {
-          dispatch({
-            type: 'SET_MESSAGES',
-            payload: JSON.parse(savedMessages).map((m: any) => ({
-              ...m,
-              createdAt: new Date(m.createdAt),
-            })),
-          });
         }
       }
     };
@@ -487,7 +477,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     
     // Sauvegarder dans localStorage
     setTimeout(() => {
-      const currentCart = JSON.parse(localStorage.getItem('voyagePro_cart') || '[]');
+      const currentCart = JSON.parse(localStorage.getItem('ayoFigurine_cart') || '[]');
       const newCart = [...currentCart, cartItem];
       localStorage.setItem('ayoFigurine_cart', JSON.stringify(newCart));
     }, 100);

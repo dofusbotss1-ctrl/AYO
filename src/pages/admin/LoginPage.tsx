@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, User, Eye, EyeOff, Glasses, Home } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { settingsService } from '../../services/firebaseService';
 
 const LoginPage: React.FC = () => {
   const { dispatch } = useApp();
@@ -22,7 +21,7 @@ const LoginPage: React.FC = () => {
 
     try {
       // Essayer de récupérer depuis Firebase d'abord
-      const { settingsService } = await import('../../services/firebaseService');
+      const { settingsService } = await import('../../services/adminSettingsService');
       let adminCredentials = await settingsService.getAdminCredentials();
       
       if (!adminCredentials) {
