@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Edit, Trash2, Eye, MapPin, Calendar, X } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, Package, X } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { Product } from '../../types';
 
@@ -495,7 +495,6 @@ const ProductsPage: React.FC = () => {
                           <div>
                             <span className="line-through text-slate-400 text-sm">{product.originalPrice} DH</span>
                             <div className="flex items-center space-x-2">
-                              <span className="text-blue-600 font-bold text-lg">{product.price} DH</span>
                               <span className="text-amber-600 font-bold text-lg">{product.price} DH</span>
                               <span className="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-bold">
                                 -{product.discount}%
@@ -554,7 +553,7 @@ const ProductsPage: React.FC = () => {
         </div>
       ) : (
         <div className="bg-white rounded-3xl shadow-xl p-16 text-center">
-          <MapPin className="w-20 h-20 text-slate-400 mx-auto mb-6" />
+          <Package className="w-20 h-20 text-slate-400 mx-auto mb-6" />
           <h3 className="text-2xl font-bold text-slate-800 mb-4">
             Aucune figurine
           </h3>

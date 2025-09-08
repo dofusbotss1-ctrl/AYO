@@ -11,7 +11,7 @@ import ContactPage from './pages/ContactPage';
 import CartPage from './pages/CartPage';
 import LoginPage from './pages/admin/LoginPage';
 import DashboardPage from './pages/admin/DashboardPage';
-import AdminProductsPage from './pages/admin/TripsPage';
+import AdminProductsPage from './pages/admin/ProductsPage';
 import CategoriesPage from './pages/admin/CategoriesPage';
 import MessagesPage from './pages/admin/MessagesPage';
 import SettingsPage from './pages/admin/SettingsPage';

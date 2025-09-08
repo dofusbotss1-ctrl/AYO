@@ -477,7 +477,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     
     // Sauvegarder dans localStorage
     setTimeout(() => {
-      const currentCart = JSON.parse(localStorage.getItem('voyagePro_cart') || '[]');
+      const currentCart = JSON.parse(localStorage.getItem('ayoFigurine_cart') || '[]');
       const newCart = [...currentCart, cartItem];
       localStorage.setItem('ayoFigurine_cart', JSON.stringify(newCart));
     }, 100);
