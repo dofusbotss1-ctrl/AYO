@@ -311,14 +311,11 @@ const ProductDetailPage: React.FC = () => {
                     alert('Veuillez sélectionner une taille avant de demander un devis');
                   }
                 }}
-                className="w-full bg-gradient-to-r from-orange-600 to-red-600 text-white py-4 rounded-xl font-medium hover:from-orange-700 hover:to-red-700 transition-colors flex items-center justify-center space-x-2"
+                className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-4 rounded-xl font-medium hover:from-blue-700 hover:to-cyan-700 transition-colors flex items-center justify-center space-x-2"
               >
-                <MessageCircle className="w-5 h-5" />
-                <span>Demander un Devis</span>
+                <ShoppingCart className="w-5 h-5" />
+                <span>Acheter Maintenant</span>
               </Link>
-              <button className="w-full border-2 border-orange-500 text-orange-500 py-4 rounded-xl font-medium hover:bg-orange-500 hover:text-white transition-colors">
-                Ajouter aux Favoris
-              </button>
             </div>
 
             {/* Service Info */}

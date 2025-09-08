@@ -448,12 +448,9 @@ const TripDetailPage: React.FC = () => {
                 }}
                 className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-4 rounded-xl font-medium hover:from-blue-700 hover:to-cyan-700 transition-colors flex items-center justify-center space-x-2"
               >
-                <MessageCircle className="w-5 h-5" />
-                <span>Demander un Devis</span>
+                <ShoppingCart className="w-5 h-5" />
+                <span>Acheter Maintenant</span>
               </Link>
-              <button className="w-full border-2 border-blue-500 text-blue-500 py-4 rounded-xl font-medium hover:bg-blue-500 hover:text-white transition-colors">
-                Ajouter aux Favoris
-              </button>
             </div>
 
             {/* Service Info */}
