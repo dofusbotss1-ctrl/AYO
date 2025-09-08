@@ -1,98 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Trash2, Plus, Minus, ShoppingCart, MessageCircle, ArrowLeft, Send, X } from 'lucide-react';
+import { Trash2, Plus, Minus, ShoppingCart, MessageCircle, ArrowLeft } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 const CartPage: React.FC = () => {
-  const { state, removeFromCart, updateCartQuantity, clearCart, getCartTotal, addMessage } = useApp();
-  const [showOrderForm, setShowOrderForm] = React.useState(false);
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [orderFormData, setOrderFormData] = React.useState({
-    name: '',
-    email: '',
-    phone: '',
-    address: '',
-    message: ''
-  });
+  const { state, removeFromCart, updateCartQuantity, clearCart, getCartTotal } = useApp();
 
   const handleQuantityChange = (itemId: string, newQuantity: number) => {
     if (newQuantity <= 0) {
       removeFromCart(itemId);
     } else {
       updateCartQuantity(itemId, newQuantity);
-    }
-  };
-
-  const handleOrderSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!orderFormData.name || !orderFormData.email || !orderFormData.phone || !orderFormData.address) {
-      alert('Veuillez remplir tous les champs obligatoires');
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    // Générer le message de commande
-    let orderMessage = `NOUVELLE COMMANDE\n\n`;
-    orderMessage += `Client: ${orderFormData.name}\n`;
-    orderMessage += `Email: ${orderFormData.email}\n`;
-    orderMessage += `Téléphone: ${orderFormData.phone}\n`;
-    orderMessage += `Adresse de livraison: ${orderFormData.address}\n\n`;
-    orderMessage += `DÉTAILS DE LA COMMANDE:\n`;
-    orderMessage += `========================\n\n`;
-    
-    state.cart.forEach((item, index) => {
-      orderMessage += `${index + 1}. ${item.product.name}\n`;
-      if (item.selectedVariant) {
-        orderMessage += `   - Variante: ${item.selectedVariant.size || ''} ${item.selectedVariant.finish || ''}\n`;
-      }
-      orderMessage += `   - Quantité: ${item.quantity}\n`;
-      orderMessage += `   - Prix unitaire: ${item.product.price} DH\n`;
-      orderMessage += `   - Sous-total: ${(item.product.price * item.quantity).toFixed(2)} DH\n\n`;
-    });
-    
-    orderMessage += `TOTAL DE LA COMMANDE: ${getCartTotal().toFixed(2)} DH\n\n`;
-    
-    if (orderFormData.message) {
-      orderMessage += `Message du client:\n${orderFormData.message}\n\n`;
-    }
-    
-    orderMessage += `Cette commande a été passée automatiquement depuis le panier.`;
-
-    const newMessage = {
-      name: orderFormData.name,
-      email: orderFormData.email,
-      phone: orderFormData.phone,
-      message: orderMessage,
-      createdAt: new Date(),
-      read: false,
-      orderStatus: 'pending' as const,
-      orderPrice: getCartTotal()
-    };
-
-    try {
-      await addMessage(newMessage);
-      
-      // Vider le panier après commande réussie
-      clearCart();
-      
-      // Réinitialiser le formulaire
-      setOrderFormData({
-        name: '',
-        email: '',
-        phone: '',
-        address: '',
-        message: ''
-      });
-      
-      setShowOrderForm(false);
-      alert('Commande envoyée avec succès ! Nous vous contacterons bientôt pour confirmer votre commande.');
-      
-    } catch (error) {
-      console.error('Erreur lors de l\'envoi de la commande:', error);
-      alert('Erreur lors de l\'envoi de la commande. Veuillez réessayer.');
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -282,157 +200,21 @@ const CartPage: React.FC = () => {
               </div>
               
               {/* Reservation Button */}
-              <button
-                onClick={() => setShowOrderForm(true)}
+              <Link
+                to={`/contact?cart=true&message=${generateCartMessage()}`}
                 className="w-full bg-gradient-to-r from-orange-600 to-red-600 text-white py-4 rounded-xl hover:from-orange-700 hover:to-red-700 transition-colors flex items-center justify-center space-x-2 font-semibold mb-4"
               >
-                <ShoppingCart className="w-5 h-5" />
+                <MessageCircle className="w-5 h-5" />
                 <span>Commander maintenant</span>
-              </button>
+              </Link>
               
               <p className="text-sm text-gray-600 text-center">
-                Remplissez vos informations pour finaliser votre commande
+                Vous serez redirigé vers notre formulaire de contact avec le détail de votre commande
               </p>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Order Form Modal */}
-      {showOrderForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">Finaliser ma Commande</h2>
-                <button
-                  onClick={() => setShowOrderForm(false)}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-
-              {/* Order Summary */}
-              <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 mb-6">
-                <h3 className="font-semibold text-orange-800 mb-3">Résumé de votre commande</h3>
-                <div className="space-y-2">
-                  {state.cart.map(item => (
-                    <div key={item.id} className="flex justify-between text-sm">
-                      <span>{item.product.name} x{item.quantity}</span>
-                      <span className="font-medium">{(item.product.price * item.quantity).toFixed(2)} DH</span>
-                    </div>
-                  ))}
-                  <div className="border-t border-orange-300 pt-2 mt-2">
-                    <div className="flex justify-between font-bold text-orange-800">
-                      <span>Total:</span>
-                      <span>{getCartTotal().toFixed(2)} DH</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Order Form */}
-              <form onSubmit={handleOrderSubmit} className="space-y-4">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Nom complet *
-                    </label>
-                    <input
-                      type="text"
-                      value={orderFormData.name}
-                      onChange={(e) => setOrderFormData({ ...orderFormData, name: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Email *
-                    </label>
-                    <input
-                      type="email"
-                      value={orderFormData.email}
-                      onChange={(e) => setOrderFormData({ ...orderFormData, email: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Téléphone *
-                  </label>
-                  <input
-                    type="tel"
-                    value={orderFormData.phone}
-                    onChange={(e) => setOrderFormData({ ...orderFormData, phone: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300"
-                    placeholder="+212 6XX XXX XXX"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Adresse de livraison *
-                  </label>
-                  <textarea
-                    value={orderFormData.address}
-                    onChange={(e) => setOrderFormData({ ...orderFormData, address: e.target.value })}
-                    rows={3}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300"
-                    placeholder="Adresse complète de livraison..."
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Message (optionnel)
-                  </label>
-                  <textarea
-                    value={orderFormData.message}
-                    onChange={(e) => setOrderFormData({ ...orderFormData, message: e.target.value })}
-                    rows={3}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300"
-                    placeholder="Instructions spéciales, questions..."
-                  />
-                </div>
-
-                <div className="flex space-x-4 pt-4">
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="flex-1 bg-gradient-to-r from-orange-600 to-red-600 text-white py-3 rounded-lg hover:from-orange-700 hover:to-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        <span>Envoi en cours...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Send className="w-5 h-5" />
-                        <span>Confirmer la Commande</span>
-                      </>
-                    )}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowOrderForm(false)}
-                    className="flex-1 border border-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    Annuler
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
