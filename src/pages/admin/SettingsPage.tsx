@@ -9,7 +9,7 @@ const SettingsPage: React.FC = () => {
   const getStoredCredentials = async () => {
     try {
       // Essayer Firebase d'abord
-      const { settingsService } = await import('../../services/adminSettingsService');
+      const { settingsService } = await import('../../services/firebaseService');
       const firebaseCredentials = await settingsService.getAdminCredentials();
       
       if (firebaseCredentials) {
@@ -98,7 +98,7 @@ const SettingsPage: React.FC = () => {
     // Sauvegarder dans Firebase (simulation avec une collection settings)
     try {
       // Utiliser le service Firebase pour sauvegarder
-      const { settingsService } = await import('../../services/adminSettingsService');
+      const { settingsService } = await import('../../services/firebaseService');
       await settingsService.saveAdminCredentials(newCredentials);
       console.log('Identifiants sauvegardés avec succès en Firebase');
       
