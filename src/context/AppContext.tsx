@@ -303,7 +303,7 @@ const AppContext = createContext<{
   addMessage: (message: Omit<ContactMessage, 'id'>) => Promise<void>;
   updateMessage: (id: string, message: Partial<ContactMessage>) => Promise<void>;
   deleteMessage: (id: string) => Promise<void>;
-  addCustomOrder: (order: Omit<CustomOrder, 'id'>) => Promise<void>;
+  addCustomOrder: (order: Omit<CustomOrder, 'id'>) => Promise<string>;
   // Financial operations
   addCharge: (charge: Omit<Charge, 'id'>) => Promise<void>;
   updateCharge: (id: string, charge: Partial<Charge>) => Promise<void>;
@@ -563,8 +563,40 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   const addCustomOrder = async (order: Omit<CustomOrder, 'id'>) => {
     try {
       console.log('AppContext: Ajout de la commande personnalisée', order);
-      // This would use a custom orders service
+      
+      // Créer la commande personnalisée avec un ID
+      const customOrderWithId = {
+        ...order,
+        id: Date.now().toString(),
+        createdAt: new Date()
+      };
+      
+      // Ajouter à l'état local
+      dispatch({ type: 'ADD_CUSTOM_ORDER', payload: customOrderWithId });
+      
+      // Sauvegarder dans localStorage
+      const savedCustomOrders = JSON.parse(localStorage.getItem('ayoFigurine_customOrders') || '[]');
+      savedCustomOrders.unshift(customOrderWithId);
+      localStorage.setItem('ayoFigurine_customOrders', JSON.stringify(savedCustomOrders));
+      
+      // Aussi créer un message pour l'admin
+      const customOrderMessage = {
+        name: order.customerName,
+        email: order.customerEmail,
+        phone: order.customerPhone || '',
+        message: `COMMANDE PERSONNALISÉE\n\nCatégorie: ${order.category}\n\nDescription:\n${order.description}\n\nImages de référence:\n${order.referenceImages.filter(img => img).join('\n')}`,
+        deliveryAddress: '',
+        productName: `Commande personnalisée - ${order.category}`,
+        quantity: 1,
+        orderStatus: 'pending' as const,
+        createdAt: new Date(),
+        read: false,
+      };
+      
+      await addMessage(customOrderMessage);
+      
       console.log('Commande personnalisée ajoutée avec succès');
+      return customOrderWithId.id;
     } catch (error) {
       console.error('Error adding custom order:', error);
       throw error;
@@ -783,6 +815,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     // Load financial data from localStorage
     const loadFinancialData = () => {
       try {
+        // Load custom orders
+        const savedCustomOrders = localStorage.getItem('ayoFigurine_customOrders');
+        if (savedCustomOrders) {
+          const customOrders = JSON.parse(savedCustomOrders).map((c: any) => ({
+            ...c,
+            createdAt: new Date(c.createdAt)
+          }));
+          dispatch({ type: 'SET_CUSTOM_ORDERS', payload: customOrders });
+        } else {
+          dispatch({ type: 'SET_CUSTOM_ORDERS', payload: [] });
+        }
+        
         const savedCharges = localStorage.getItem('ayoFigurine_charges');
         if (savedCharges) {
           const charges = JSON.parse(savedCharges).map((c: any) => ({
