@@ -61,6 +61,7 @@ type AppAction =
   | { type: 'DELETE_INVESTMENT'; payload: string }
   | { type: 'SET_REVENUES'; payload: Revenue[] }
   | { type: 'ADD_REVENUE'; payload: Revenue }
+  | { type: 'DELETE_REVENUE'; payload: string }
   | { type: 'LOGIN'; payload: string }
   | { type: 'LOGOUT' }
   | { type: 'SET_SEARCH'; payload: string }
@@ -216,6 +217,11 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
       return { ...state, revenues: action.payload };
     case 'ADD_REVENUE':
       return { ...state, revenues: [action.payload, ...state.revenues] };
+    case 'DELETE_REVENUE':
+      return {
+        ...state,
+        revenues: state.revenues.filter(r => r.id !== action.payload),
+      };
     case 'LOGIN':
       return {
         ...state,
@@ -553,7 +559,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const deleteMessage = async (id: string) => {
     try {
+      // Find the message to get order details before deletion
+      const messageToDelete = state.messages.find(m => m.id === id);
+      
+      // Delete the message first
       await messagesService.delete(id);
+      
+      // If the deleted message was a confirmed order with revenue, delete associated revenue
+      if (messageToDelete?.orderStatus === 'delivered' && messageToDelete?.orderPrice) {
+        // Find and delete associated revenue
+        const associatedRevenue = state.revenues.find(r => r.orderId === id);
+        if (associatedRevenue) {
+          await deleteRevenue(associatedRevenue.id);
+          console.log('Revenue associé supprimé:', associatedRevenue.id);
+        }
+      }
     } catch (error) {
       console.error('Error deleting message:', error);
       throw error;
@@ -719,6 +739,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       localStorage.setItem('ayoFigurine_revenues', JSON.stringify(savedRevenues));
     } catch (error) {
       console.error('Error adding revenue:', error);
+      throw error;
+    }
+  };
+
+  const deleteRevenue = async (id: string) => {
+    try {
+      dispatch({ type: 'DELETE_REVENUE', payload: id });
+      
+      // Update localStorage
+      const savedRevenues = JSON.parse(localStorage.getItem('ayoFigurine_revenues') || '[]');
+      const filteredRevenues = savedRevenues.filter((r: Revenue) => r.id !== id);
+      localStorage.setItem('ayoFigurine_revenues', JSON.stringify(filteredRevenues));
+      
+      console.log('Revenue supprimé:', id);
+    } catch (error) {
+      console.error('Error deleting revenue:', error);
       throw error;
     }
   };
