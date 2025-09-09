@@ -108,3 +108,32 @@ export interface CartItem {
   quantity: number;
   addedAt: Date;
 }
+
+export interface Charge {
+  id: string;
+  category: 'Machine' | 'Materials' | 'Marketing' | 'Logistics' | 'Other';
+  title: string;
+  amount: number;
+  date: Date;
+  notes?: string;
+  createdAt: Date;
+}
+
+export interface Investment {
+  id: string;
+  title: string;
+  amount: number;
+  date: Date;
+  notes?: string;
+  createdAt: Date;
+}
+
+export interface Revenue {
+  id: string;
+  orderId?: string;
+  category: string;
+  amount: number;
+  date: Date;
+  source: 'order' | 'manual';
+  createdAt: Date;
+}

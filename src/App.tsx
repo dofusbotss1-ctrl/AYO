@@ -14,6 +14,7 @@ import DashboardPage from './pages/admin/DashboardPage';
 import AdminProductsPage from './pages/admin/TripsPage';
 import CategoriesPage from './pages/admin/CategoriesPage';
 import MessagesPage from './pages/admin/MessagesPage';
+import FinancialPage from './pages/admin/FinancialPage';
 import SettingsPage from './pages/admin/SettingsPage';
 
 // Protected route component
@@ -76,6 +77,7 @@ function AppContent() {
         }>
           <Route path="trips" element={<AdminProductsPage />} />
           <Route path="categories" element={<CategoriesPage />} />
+          <Route path="financial" element={<FinancialPage />} />
           <Route path="messages" element={<MessagesPage />} />
           <Route path="settings" element={<SettingsPage />} />
         </Route>

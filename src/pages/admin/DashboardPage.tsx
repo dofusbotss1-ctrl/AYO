@@ -18,7 +18,9 @@ import {
   Eye,
   Heart,
   Menu,
-  X
+  X,
+  DollarSign,
+  PieChart
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
@@ -49,6 +51,11 @@ const DashboardPage: React.FC = () => {
       path: '/admin/dashboard/categories', 
       icon: FolderOpen, 
       label: 'Catégories' 
+    },
+    { 
+      path: '/admin/dashboard/financial', 
+      icon: DollarSign, 
+      label: 'Gestion Financière' 
     },
     { 
       path: '/admin/dashboard/messages', 
@@ -86,30 +93,31 @@ const DashboardPage: React.FC = () => {
       bgGradient: 'from-cyan-50 to-teal-50'
     },
     {
+      title: 'Chiffre d\'Affaires',
+      value: `${state.revenues ? state.revenues.reduce((sum, r) => sum + r.amount, 0) : 0} DH`,
+      icon: TrendingUp,
+      gradient: 'from-green-500 to-emerald-600',
+      bgGradient: 'from-green-50 to-emerald-50'
+    },
+    {
+      title: 'Bénéfice Net',
+      value: `${(() => {
+        const totalRevenue = state.revenues ? state.revenues.reduce((sum, r) => sum + r.amount, 0) : 0;
+        const totalCharges = state.charges ? state.charges.reduce((sum, c) => sum + c.amount, 0) : 0;
+        const totalInvestments = state.investments ? state.investments.reduce((sum, i) => sum + i.amount, 0) : 0;
+        return totalRevenue - totalCharges - totalInvestments;
+      })()} DH`,
+      icon: DollarSign,
+      gradient: 'from-purple-500 to-pink-600',
+      bgGradient: 'from-purple-50 to-pink-50'
+    },
+    {
       title: 'Messages',
       value: state.messages ? state.messages.length : 0,
       icon: MessageSquare,
       gradient: 'from-teal-500 to-green-600',
       bgGradient: 'from-teal-50 to-green-50'
     },
-    {
-      title: 'Figurines Commandées',
-      value: state.messages ? state.messages.filter(m => m.orderStatus === 'received').length : 0,
-      icon: ShoppingBag,
-      gradient: 'from-green-500 to-teal-600',
-      bgGradient: 'from-green-50 to-teal-50'
-    },
-    {
-      title: 'Chiffre d\'Affaires',
-      value: `${state.messages
-        ? state.messages
-          .filter(m => m.orderStatus === 'received' && m.orderPrice)
-          .reduce((total, m) => total + (m.orderPrice || 0), 0)
-        : 0} DH`,
-      icon: TrendingUp,
-      gradient: 'from-yellow-500 to-amber-600',
-      bgGradient: 'from-yellow-50 to-amber-50'
-    }
   ];
 
   const isDashboardHome = location.pathname === '/admin/dashboard';
