@@ -10,8 +10,12 @@ const ContactPage: React.FC = () => {
   const productId = searchParams.get('product');
   const selectedSize = searchParams.get('size');
   const selectedDate = searchParams.get('date');
+  const quantityParam = searchParams.get('quantity');
   const isCartOrder = searchParams.get('cart') === 'true';
   const prefilledMessage = searchParams.get('message');
+  
+  // État pour la quantité
+  const [quantity, setQuantity] = useState(quantityParam ? parseInt(quantityParam) : 1);
   
   // Déterminer si on doit afficher l'adresse de livraison
   const shouldShowDeliveryAddress = isCartOrder || productId;
