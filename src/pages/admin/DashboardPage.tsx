@@ -53,17 +53,18 @@ const DashboardPage: React.FC = () => {
       icon: FolderOpen, 
       label: 'Catégories' 
     },
-    { 
-      path: '/admin/dashboard/financial', 
-      icon: DollarSign, 
-      label: 'Gestion Financière' 
-    },
-    { 
+       { 
       path: '/admin/dashboard/orders', 
       icon: ShoppingBag, 
       label: 'Commandes',
       badge: state.messages.filter(m => !m.read).length
     },
+    { 
+      path: '/admin/dashboard/financial', 
+      icon: DollarSign, 
+      label: 'Gestion Financière' 
+    },
+ 
     { 
       path: '/admin/dashboard/settings', 
       icon: Settings, 
