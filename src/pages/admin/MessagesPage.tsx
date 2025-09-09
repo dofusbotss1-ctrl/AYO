@@ -245,33 +245,23 @@ const MessagesPage: React.FC = () => {
                           {selectedMessage.orderStatus === 'pending' && <div className="w-4 h-4 bg-yellow-500 rounded-full" />}
                           {selectedMessage.orderStatus === 'confirmed' && <CheckCircle className="w-4 h-4 text-blue-500" />}
                           {selectedMessage.orderStatus === 'sent' && <Send className="w-4 h-4 text-purple-500" />}
-                          {message.orderStatus === 'confirmed' && <CheckCircle className="w-3 h-3 text-blue-500" />}
-                          {message.orderStatus === 'sent' && <Send className="w-3 h-3 text-purple-500" />}
                           {selectedMessage.orderStatus === 'received' && <CheckCircle className="w-4 h-4 text-green-500" />}
                           {selectedMessage.orderStatus === 'returned' && <XCircle className="w-4 h-4 text-red-500" />}
-                          {message.orderStatus === 'returned' && <XCircle className="w-3 h-3 text-red-500" />}
                           {selectedMessage.orderStatus === 'cancelled' && <XCircle className="w-4 h-4 text-red-500" />}
                           <span className={`${
                             selectedMessage.orderStatus === 'pending' ? 'text-yellow-600' :
                             selectedMessage.orderStatus === 'confirmed' ? 'text-blue-600' :
                             selectedMessage.orderStatus === 'sent' ? 'text-purple-600' :
-                            message.orderStatus === 'confirmed' ? 'text-blue-600' :
-                            message.orderStatus === 'sent' ? 'text-purple-600' :
                             selectedMessage.orderStatus === 'received' ? 'text-green-600' :
                             selectedMessage.orderStatus === 'returned' ? 'text-red-600' :
-                            message.orderStatus === 'returned' ? 'text-red-600' :
                             'text-red-600'
                           }`}>
                             Statut: {selectedMessage.orderStatus === 'pending' ? 'Commande en attente' :
                                    selectedMessage.orderStatus === 'confirmed' ? 'Commande confirmée' :
                                    selectedMessage.orderStatus === 'sent' ? 'Commande envoyée' :
-                             message.orderStatus === 'confirmed' ? 'Commande confirmée' :
-                             message.orderStatus === 'sent' ? 'Commande envoyée' :
                                    selectedMessage.orderStatus === 'received' ? 'Commande reçue' :
                                    selectedMessage.orderStatus === 'returned' ? 'Commande retournée' :
-                             message.orderStatus === 'returned' ? 'Commande retournée' :
                                    'Commande annulée'}
-                            {getTripName(message.tripId)}
                           </span>
                         </div>
                       )}
