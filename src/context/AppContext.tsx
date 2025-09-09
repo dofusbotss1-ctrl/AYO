@@ -737,19 +737,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       type: 'ADD_TO_CART', 
       payload: { product, quantity, selectedVariant } 
     });
-    
-    // Sauvegarder dans localStorage
-    setTimeout(() => {
-      localStorage.setItem('ayoFigurine_cart', JSON.stringify(newCart));
-    }, 100);
   };
 
   const removeFromCart = (itemId: string) => {
     dispatch({ type: 'REMOVE_FROM_CART', payload: itemId });
-    
-    // Mettre à jour localStorage
-    const updatedCart = state.cart.filter(item => item.id !== itemId);
-    localStorage.setItem('ayoFigurine_cart', JSON.stringify(updatedCart));
   };
 
   const updateCartQuantity = (itemId: string, quantity: number) => {
@@ -759,17 +750,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     }
     
     dispatch({ type: 'UPDATE_CART_QUANTITY', payload: { id: itemId, quantity } });
-    
-    // Mettre à jour localStorage
-    const updatedCart = state.cart.map(item =>
-      item.id === itemId ? { ...item, quantity } : item
-    );
-    localStorage.setItem('ayoFigurine_cart', JSON.stringify(updatedCart));
   };
 
   const clearCart = () => {
     dispatch({ type: 'CLEAR_CART' });
-    localStorage.removeItem('ayoFigurine_cart');
     console.log('Panier vidé avec succès');
   };
 
@@ -841,6 +825,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     
     loadFinancialData();
   }, []);
+
+  // Sauvegarder le panier dans localStorage à chaque changement
+  useEffect(() => {
+    localStorage.setItem('ayoFigurine_cart', JSON.stringify(state.cart));
+  }, [state.cart]);
 
   return (
     <AppContext.Provider value={{ 
