@@ -78,7 +78,7 @@ function AppContent() {
           <Route path="trips" element={<AdminProductsPage />} />
           <Route path="categories" element={<CategoriesPage />} />
           <Route path="financial" element={<FinancialPage />} />
-          <Route path="messages" element={<MessagesPage />} />
+          <Route path="orders" element={<MessagesPage />} />
           <Route path="settings" element={<SettingsPage />} />
         </Route>
 

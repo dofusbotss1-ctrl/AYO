@@ -59,9 +59,9 @@ const DashboardPage: React.FC = () => {
       label: 'Gestion Financière' 
     },
     { 
-      path: '/admin/dashboard/messages', 
-      icon: MessageSquare, 
-      label: 'Messages',
+      path: '/admin/dashboard/orders', 
+      icon: ShoppingBag, 
+      label: 'Commandes',
       badge: state.messages.filter(m => !m.read).length
     },
     { 
@@ -113,9 +113,9 @@ const DashboardPage: React.FC = () => {
       bgGradient: 'from-purple-50 to-pink-50'
     },
     {
-      title: 'Messages',
+      title: 'Commandes',
       value: state.messages ? state.messages.length : 0,
-      icon: MessageSquare,
+      icon: ShoppingBag,
       gradient: 'from-teal-500 to-green-600',
       bgGradient: 'from-teal-50 to-green-50'
     },
@@ -385,10 +385,10 @@ const DashboardPage: React.FC = () => {
                 <div className="bg-white rounded-3xl shadow-xl p-6 lg:p-8">
                   <div className="flex items-center mb-8">
                     <div className="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-orange-500 to-amber-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg">
-                      <MessageSquare className="w-5 h-5 lg:w-6 lg:h-6 text-white" />
+                      <ShoppingBag className="w-5 h-5 lg:w-6 lg:h-6 text-white" />
                     </div>
                     <h3 className="text-xl lg:text-2xl font-bold text-slate-800">
-                      Messages Récents
+                      Commandes Récentes
                     </h3>
                   </div>
                   <div className="space-y-6">
@@ -402,9 +402,18 @@ const DashboardPage: React.FC = () => {
                             <span className="w-3 h-3 bg-orange-500 rounded-full animate-pulse"></span>
                           )}
                         </div>
-                        <p className="text-slate-600 line-clamp-2 mb-2 text-sm">
-                          {message.message}
-                        </p>
+                        <div className="text-slate-600 mb-2 text-sm">
+                          {message.productName && (
+                            <p className="font-medium text-emerald-600">
+                              📦 {message.productName} {message.quantity && `(x${message.quantity})`}
+                            </p>
+                          )}
+                          {message.orderPrice && (
+                            <p className="font-bold text-green-600">
+                              💰 {message.orderPrice} DH
+                            </p>
+                          )}
+                        </div>
                         <p className="text-sm text-slate-500 font-medium">
                           {message.createdAt.toLocaleDateString()}
                         </p>
@@ -412,10 +421,10 @@ const DashboardPage: React.FC = () => {
                     ))}
                   </div>
                   <Link
-                    to="/admin/dashboard/messages"
+                    to="/admin/dashboard/orders"
                     className="block text-center bg-gradient-to-r from-orange-600 to-amber-600 text-white font-bold py-3 lg:py-4 rounded-2xl mt-8 hover:from-orange-700 hover:to-amber-700 transition-all duration-300 transform hover:scale-105 shadow-lg text-sm lg:text-base"
                   >
-                    Voir tous les messages
+                    Voir toutes les commandes
                   </Link>
                 </div>
 
