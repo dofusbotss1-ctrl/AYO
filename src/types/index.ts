@@ -12,6 +12,7 @@ export interface Product {
   variants: ProductVariant[];
   features: string[];
   inStock: boolean;
+  stock: number;
   createdAt: Date;
   discount?: number;
   originalPrice?: number;

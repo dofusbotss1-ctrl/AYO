@@ -18,6 +18,7 @@ const ProductsPage: React.FC = () => {
     descriptionImage: '',
     useImageDescription: false,
     inStock: true,
+    stock: '',
     size: '',
     finish: 'raw' as 'raw' | 'painted',
     baseStyle: '',
@@ -28,13 +29,18 @@ const ProductsPage: React.FC = () => {
     e.preventDefault();
     
     // Validation des données
-    if (!formData.name.trim() || !formData.description.trim() || !formData.price || !formData.category) {
+    if (!formData.name.trim() || !formData.description.trim() || !formData.price || !formData.category || !formData.stock) {
       alert('Veuillez remplir tous les champs obligatoires');
       return;
     }
     
     if (parseFloat(formData.price) <= 0) {
       alert('Le prix doit être supérieur à 0');
+      return;
+    }
+    
+    if (parseInt(formData.stock) < 0) {
+      alert('Le stock ne peut pas être négatif');
       return;
     }
     
@@ -52,7 +58,8 @@ const ProductsPage: React.FC = () => {
       category: formData.category,
       features: formData.features.split(',').map(f => f.trim()).filter(f => f),
       images: validImages,
-      inStock: formData.inStock,
+      stock: parseInt(formData.stock),
+      inStock: parseInt(formData.stock) > 0,
       createdAt: editingProduct?.createdAt || new Date(),
       size: formData.size,
       finish: formData.finish,
@@ -98,6 +105,7 @@ const ProductsPage: React.FC = () => {
       descriptionImage: '',
       useImageDescription: false,
       inStock: true,
+      stock: '',
       size: '',
       finish: 'raw' as 'raw' | 'painted',
       baseStyle: '',
@@ -120,6 +128,7 @@ const ProductsPage: React.FC = () => {
       descriptionImage: product.descriptionImage || '',
       useImageDescription: !!product.descriptionImage,
       inStock: product.inStock,
+      stock: product.stock?.toString() || '0',
       size: product.size || '',
       finish: product.finish || 'raw',
       baseStyle: product.baseStyle || '',
@@ -227,6 +236,20 @@ const ProductsPage: React.FC = () => {
                   </div>
                 </div>
 
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-3">
+                    Stock disponible *
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={formData.stock}
+                    onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
+                    className="w-full px-4 py-4 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300"
+                    placeholder="Nombre de figurines en stock"
+                    required
+                  />
+                </div>
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-3">
                     Réduction (%)
@@ -421,18 +444,6 @@ const ProductsPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="inStock"
-                    checked={formData.inStock}
-                    onChange={(e) => setFormData({ ...formData, inStock: e.target.checked })}
-                    className="w-5 h-5 text-blue-600 border-2 border-slate-300 rounded focus:ring-blue-500"
-                  />
-                  <label htmlFor="inStock" className="ml-3 text-sm font-bold text-slate-700">
-                    Figurine disponible
-                  </label>
-                </div>
 
                 <div className="flex space-x-4 pt-6">
                   <button
@@ -466,7 +477,7 @@ const ProductsPage: React.FC = () => {
                   <th className="px-8 py-6 text-left text-sm font-bold text-slate-600 uppercase tracking-wider">Catégorie</th>
                   <th className="px-8 py-6 text-left text-sm font-bold text-slate-600 uppercase tracking-wider">Prix</th>
                   <th className="px-8 py-6 text-left text-sm font-bold text-slate-600 uppercase tracking-wider">Taille</th>
-                  <th className="px-8 py-6 text-left text-sm font-bold text-slate-600 uppercase tracking-wider">Disponibilité</th>
+                  <th className="px-8 py-6 text-left text-sm font-bold text-slate-600 uppercase tracking-wider">Stock</th>
                   <th className="px-8 py-6 text-left text-sm font-bold text-slate-600 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
@@ -513,13 +524,20 @@ const ProductsPage: React.FC = () => {
                       </span>
                     </td>
                     <td className="px-8 py-6">
-                      <span className={`inline-flex px-3 py-2 text-sm font-bold rounded-full ${
-                        product.inStock 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-red-100 text-red-800'
-                      }`}>
-                        {product.inStock ? 'En stock' : 'Rupture'}
-                      </span>
+                      <div className="flex items-center space-x-2">
+                        <span className={`inline-flex px-3 py-2 text-sm font-bold rounded-full ${
+                          (product.stock || 0) > 5 
+                            ? 'bg-green-100 text-green-800' 
+                            : (product.stock || 0) > 0
+                            ? 'bg-orange-100 text-orange-800'
+                            : 'bg-red-100 text-red-800'
+                        }`}>
+                          {product.stock || 0}
+                        </span>
+                        <span className="text-xs text-slate-500">
+                          {(product.stock || 0) > 5 ? 'Stock OK' : (product.stock || 0) > 0 ? 'Stock faible' : 'Rupture'}
+                        </span>
+                      </div>
                     </td>
                     <td className="px-8 py-6">
                       <div className="flex space-x-2">
