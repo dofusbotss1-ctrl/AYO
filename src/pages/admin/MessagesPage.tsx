@@ -446,3 +446,5 @@ const OrdersPage: React.FC = () => {
     </div>
   );
 };
+
+export default OrdersPage;
