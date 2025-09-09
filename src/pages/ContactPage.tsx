@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { MapPin, Phone, Mail, Clock, Send, Star, Award, Shield, Truck, ShoppingCart } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, Send, Star, Award, Shield, Truck, ShoppingCart, User } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { ContactMessage } from '../types';
 
@@ -17,17 +17,15 @@ const ContactPage: React.FC = () => {
   // État pour la quantité
   const [quantity, setQuantity] = useState(quantityParam ? parseInt(quantityParam) : 1);
   
-  // Déterminer si on doit afficher l'adresse de livraison
-  const shouldShowDeliveryAddress = isCartOrder || productId;
-  
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
     deliveryAddress: '',
-    message: prefilledMessage ? decodeURIComponent(prefilledMessage) : productId ? `Bonjour, je suis intéressé(e) par la figurine: ${
-      state.products.find(p => p.id === productId)?.name || ''
-    }${selectedDate ? ` - Date: ${selectedDate}` : ''}` : '',
+    message: !isCartOrder && prefilledMessage ? decodeURIComponent(prefilledMessage) : 
+             !isCartOrder && productId ? `Bonjour, je suis intéressé(e) par la figurine: ${
+               state.products.find(p => p.id === productId)?.name || ''
+             }${selectedDate ? ` - Date: ${selectedDate}` : ''}` : '',
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -35,20 +33,21 @@ const ContactPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.phone || !formData.message) return;
+    if (!formData.name || !formData.email || !formData.phone) return;
     
-    // Vérifier l'adresse de livraison pour les commandes panier et devis produit
-    if (shouldShowDeliveryAddress && !formData.deliveryAddress.trim()) {
+    // Vérifier l'adresse de livraison pour les commandes
+    if ((isCartOrder || productId) && !formData.deliveryAddress.trim()) {
       alert('Veuillez renseigner votre adresse de livraison pour finaliser votre demande');
       return;
     }
 
     setIsSubmitting(true);
 
-    // Calculer les données de commande pour le panier
+    // Calculer les données de commande
     let totalQuantity = 0;
     let totalPrice = 0;
     let productNames = '';
+    let orderMessage = '';
 
     if (isCartOrder && state.cart.length > 0) {
       totalQuantity = state.cart.reduce((total, item) => total + item.quantity, 0);
@@ -58,16 +57,23 @@ const ContactPage: React.FC = () => {
       productNames = state.cart.map(item => {
         return `${item.productName} (x${item.quantity})`;
       }).join(', ');
+      
+      // Message automatique pour commande panier
+      orderMessage = `COMMANDE PANIER\n\nProduits commandés:\n${state.cart.map(item => 
+        `• ${item.productName} - Quantité: ${item.quantity} - Prix: ${(item.price * item.quantity).toFixed(2)} DH`
+      ).join('\n')}\n\nTotal: ${totalPrice.toFixed(2)} DH\n\nAdresse de livraison:\n${formData.deliveryAddress}`;
     } else if (product) {
       totalQuantity = quantity;
       totalPrice = product.price * quantity;
       productNames = product.name;
+      orderMessage = formData.message;
     }
+    
     const newMessage: Omit<ContactMessage, 'id'> = {
       name: formData.name,
       email: formData.email,
       phone: formData.phone,
-      message: formData.message,
+      message: orderMessage || formData.message,
       deliveryAddress: formData.deliveryAddress || undefined,
       productId: productId,
       productName: productNames,
@@ -137,9 +143,9 @@ const ContactPage: React.FC = () => {
               <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 mb-8 border border-green-200">
                 <h3 className="font-semibold text-green-800 mb-4 flex items-center">
                   <ShoppingCart className="w-5 h-5 text-green-600 mr-2" />
-                  Commande de {state.cart.reduce((total, item) => total + (item.quantity || 1), 0)} figurine{state.cart.reduce((total, item) => total + (item.quantity || 1), 0) > 1 ? 's' : ''}
+                  Récapitulatif de votre commande
                 </h3>
-                <div className="space-y-3">
+                <div className="space-y-3 mb-4">
                   {state.cart.map(item => (
                     <div key={item.id} className="flex items-center space-x-3 p-3 bg-white rounded-lg">
                       <img
@@ -152,18 +158,35 @@ const ContactPage: React.FC = () => {
                         {item.selectedVariant && (
                           <p className="text-sm text-gray-600">Variante: {item.selectedVariant}</p>
                         )}
-                        <p className="text-sm text-green-600 font-medium">
-                          {item.price.toFixed(2)} DH × {item.quantity} = {(item.price * item.quantity).toFixed(2)} DH
+                        <div className="flex justify-between items-center">
+                          <p className="text-sm text-gray-600">Prix unitaire: {item.price.toFixed(2)} DH</p>
+                          <p className="text-sm font-bold text-green-600">Qté: {item.quantity}</p>
+                        </div>
+                        <p className="text-sm font-bold text-green-600">
+                          Sous-total: {(item.price * item.quantity).toFixed(2)} DH
                         </p>
                       </div>
                     </div>
                   ))}
                 </div>
                 <div className="border-t border-green-200 pt-3 mt-3">
-                  <div className="flex justify-between items-center">
-                    <span className="font-bold text-green-800">Total:</span>
+                  <div className="grid grid-cols-2 gap-4 mb-3">
+                    <div className="text-center p-2 bg-white rounded-lg">
+                      <p className="text-sm text-gray-600">Nombre d'articles</p>
+                      <p className="text-lg font-bold text-green-600">
+                        {state.cart.reduce((total, item) => total + item.quantity, 0)}
+                      </p>
+                    </div>
+                    <div className="text-center p-2 bg-white rounded-lg">
+                      <p className="text-sm text-gray-600">Total à payer</p>
+                      <p className="text-lg font-bold text-green-600">
+                        {state.cart.reduce((total, item) => total + (item.price * item.quantity), 0).toFixed(2)} DH
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-center p-3 bg-green-100 rounded-lg">
                     <span className="text-2xl font-bold text-green-600">
-                      {state.cart.reduce((total, item) => total + (item.price * item.quantity), 0).toFixed(2)} DH
+                      TOTAL: {state.cart.reduce((total, item) => total + (item.price * item.quantity), 0).toFixed(2)} DH
                     </span>
                   </div>
                 </div>
@@ -227,103 +250,118 @@ const ContactPage: React.FC = () => {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-3">
-                      Nom complet *
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full px-4 py-4 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-amber-100 focus:border-amber-500 transition-all duration-300 text-base"
-                      placeholder="Votre nom complet"
-                    />
+                {/* Informations Client */}
+                <div className="bg-blue-50 rounded-2xl p-6 border border-blue-200">
+                  <h3 className="text-lg font-bold text-blue-800 mb-4 flex items-center">
+                    <User className="w-5 h-5 mr-2" />
+                    Vos informations
+                  </h3>
+                  <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-2">
+                        Nom complet *
+                      </label>
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        required
+                        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300"
+                        placeholder="Votre nom complet"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="email" className="block text-sm font-semibold text-slate-700 mb-2">
+                        Email *
+                      </label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        required
+                        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300"
+                        placeholder="votre@email.com"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-semibold text-slate-700 mb-3">
-                      Email *
+                  <div className="mt-4">
+                    <label htmlFor="phone" className="block text-sm font-semibold text-slate-700 mb-2">
+                      Numéro de téléphone *
                     </label>
                     <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
+                      type="tel"
+                      id="phone"
+                      name="phone"
+                      value={formData.phone}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-4 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-amber-100 focus:border-amber-500 transition-all duration-300 text-base"
-                      placeholder="votre@email.com"
+                      className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300"
+                      placeholder="+212 6XX XXX XXX"
                     />
                   </div>
                 </div>
 
-                <div>
-                  <label htmlFor="phone" className="block text-sm font-semibold text-slate-700 mb-3">
-                    Numéro de téléphone *
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-4 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-amber-100 focus:border-amber-500 transition-all duration-300 text-base"
-                    placeholder="+212 6XX XXX XXX"
-                  />
-                </div>
-
-                {shouldShowDeliveryAddress && (
-                  <div>
-                    <label htmlFor="deliveryAddress" className="block text-sm font-semibold text-slate-700 mb-3">
-                      Adresse de livraison {isCartOrder ? '*' : '(recommandée)'}
-                    </label>
+                {/* Adresse de livraison */}
+                {(isCartOrder || productId) && (
+                  <div className="bg-orange-50 rounded-2xl p-6 border border-orange-200">
+                    <h3 className="text-lg font-bold text-orange-800 mb-4 flex items-center">
+                      <MapPin className="w-5 h-5 mr-2" />
+                      Adresse de livraison
+                    </h3>
                     <textarea
                       id="deliveryAddress"
                       name="deliveryAddress"
                       value={formData.deliveryAddress}
                       onChange={handleInputChange}
-                      required={shouldShowDeliveryAddress}
+                      required={isCartOrder || productId}
                       rows={3}
-                      className="w-full px-4 py-4 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-amber-100 focus:border-amber-500 transition-all duration-300 text-base"
-                      placeholder={isCartOrder ? "Votre adresse complète de livraison..." : "Votre adresse pour l'estimation des frais de livraison..."}
+                      className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-orange-100 focus:border-orange-500 transition-all duration-300"
+                      placeholder="Votre adresse complète de livraison (rue, ville, code postal)..."
                     />
                   </div>
                 )}
 
-                <div>
-                  <label htmlFor="message" className="block text-sm font-semibold text-slate-700 mb-3">
-                    Message *
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleInputChange}
-                    required
-                    rows={6}
-                    className="w-full px-4 py-4 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-amber-100 focus:border-amber-500 resize-none transition-all duration-300 text-base"
-                    placeholder="Décrivez votre demande en détail..."
-                  />
-                </div>
+                {/* Message seulement pour les devis produit */}
+                {!isCartOrder && (
+                  <div>
+                    <label htmlFor="message" className="block text-sm font-semibold text-slate-700 mb-3">
+                      Message *
+                    </label>
+                    <textarea
+                      id="message"
+                      name="message"
+                      value={formData.message}
+                      onChange={handleInputChange}
+                      required={!isCartOrder}
+                      rows={6}
+                      className="w-full px-4 py-4 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-amber-100 focus:border-amber-500 resize-none transition-all duration-300 text-base"
+                      placeholder="Décrivez votre demande en détail..."
+                    />
+                  </div>
+                )}
 
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-gradient-to-r from-amber-600 to-orange-600 text-white py-4 sm:py-5 rounded-xl font-semibold hover:from-amber-700 hover:to-orange-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-3 transform hover:scale-[1.02] shadow-lg hover:shadow-xl text-base"
+                  className={`w-full text-white py-4 sm:py-5 rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-3 transform hover:scale-[1.02] shadow-lg hover:shadow-xl text-base ${
+                    isCartOrder 
+                      ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700'
+                      : 'bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700'
+                  }`}
                 >
                   {isSubmitting ? (
                     <>
                       <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      <span>Envoi en cours...</span>
+                      <span>{isCartOrder ? 'Finalisation...' : 'Envoi en cours...'}</span>
                     </>
                   ) : (
                     <>
                       <Send className="w-6 h-6" />
-                      <span>Envoyer le message</span>
+                      <span>{isCartOrder ? 'Finaliser ma commande' : 'Envoyer le message'}</span>
                     </>
                   )}
                 </button>
