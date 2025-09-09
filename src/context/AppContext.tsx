@@ -933,6 +933,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       updateInvestment,
       deleteInvestment,
       addRevenue,
+      deleteRevenue,
       getFinancialSummary,
       addToCart,
       removeFromCart,
