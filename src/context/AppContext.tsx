@@ -497,7 +497,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       const currentMessage = state.messages.find(m => m.id === id);
       const isOrderReceived = message.orderStatus === 'received' && currentMessage?.orderStatus !== 'received';
       
+      // Check if order status is being updated to 'received'
+      const currentMessage = state.messages.find(m => m.id === id);
+      const isOrderReceived = message.orderStatus === 'received' && currentMessage?.orderStatus !== 'received';
+      
       await messagesService.update(id, message);
+      
+      // If order is received, add revenue and update stock
+      if (isOrderReceived && currentMessage?.orderPrice && currentMessage?.productId) {
+        // Add revenue
+        await addRevenue({
+          category: 'Vente Figurine',
+          amount: currentMessage.orderPrice,
+          date: new Date(),
+          source: 'order',
+          orderId: id
+        }, true, currentMessage.productId, 1); // Assuming quantity 1, you can modify this
+      }
       
       // If order is received, add revenue and update stock
       if (isOrderReceived && currentMessage?.orderPrice && currentMessage?.productId) {

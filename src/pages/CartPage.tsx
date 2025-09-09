@@ -202,6 +202,12 @@ const CartPage: React.FC = () => {
               {/* Reservation Button */}
               <Link
                 to={`/contact?cart=true&message=${generateCartMessage()}`}
+                onClick={() => {
+                  // Clear cart after navigating to contact
+                  setTimeout(() => {
+                    clearCart();
+                  }, 1000);
+                }}
                 className="w-full bg-gradient-to-r from-orange-600 to-red-600 text-white py-4 rounded-xl hover:from-orange-700 hover:to-red-700 transition-colors flex items-center justify-center space-x-2 font-semibold mb-4"
               >
                 <MessageCircle className="w-5 h-5" />

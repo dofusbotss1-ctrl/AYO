@@ -515,13 +515,20 @@ const ProductsPage: React.FC = () => {
                           </div>
                         ) : (
                           <span className="text-lg">{product.price} DH</span>
-                        )}
+                      <div className="flex items-center space-x-2">
+                        <span className={`inline-flex px-3 py-2 text-sm font-bold rounded-full ${
+                          (product.stock || 0) > 5 
+                            ? 'bg-green-100 text-green-800' 
+                            : (product.stock || 0) > 0
+                            ? 'bg-orange-100 text-orange-800'
+                            : 'bg-red-100 text-red-800'
+                        }`}>
+                          {product.stock || 0}
+                        </span>
+                        <span className="text-xs text-slate-500">
+                          {(product.stock || 0) > 5 ? 'Stock OK' : (product.stock || 0) > 0 ? 'Stock faible' : 'Rupture'}
+                        </span>
                       </div>
-                    </td>
-                    <td className="px-8 py-6">
-                      <span className="text-slate-600">
-                        {product.size || 'Non spécifiée'}
-                      </span>
                     </td>
                     <td className="px-8 py-6">
                       <div className="flex items-center space-x-2">

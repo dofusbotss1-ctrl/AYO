@@ -65,6 +65,11 @@ export const productsService = {
         productData.createdAt = new Date();
       }
       
+      // Ensure stock is set
+      if (productData.stock === undefined) {
+        productData.stock = 0;
+      }
+      
       const docRef = await addDoc(collection(db, PRODUCTS_COLLECTION), {
         ...productData,
         createdAt: Timestamp.fromDate(productData.createdAt)
