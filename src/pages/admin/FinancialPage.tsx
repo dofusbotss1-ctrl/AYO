@@ -153,15 +153,6 @@ const FinancialPage: React.FC = () => {
     setShowInvestmentForm(false);
   };
 
-  const resetRevenueForm = () => {
-    setRevenueForm({
-      category: '',
-      amount: '',
-      date: new Date().toISOString().split('T')[0],
-      source: 'manual'
-    });
-    setShowRevenueForm(false);
-  };
 
   const handleEditCharge = (charge: Charge) => {
     setEditingCharge(charge);
