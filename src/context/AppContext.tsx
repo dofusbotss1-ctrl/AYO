@@ -495,12 +495,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       // Check if order status is being updated to 'received'
       const currentMessage = state.messages.find(m => m.id === id);
-      const isOrderDelivered = message.orderStatus === 'delivered' && currentMessage?.orderStatus !== 'delivered';
+      const isOrderConfirmed = message.orderStatus === 'confirmed' && currentMessage?.orderStatus !== 'confirmed';
       
       await messagesService.update(id, message);
       
-      // If order is delivered, add revenue and update stock
-      if (isOrderDelivered && currentMessage?.orderPrice) {
+      // If order is confirmed, add revenue automatically
+      if (isOrderConfirmed && currentMessage?.orderPrice) {
         // Add revenue
         const productName = currentMessage?.productName || 'Figurine';
         await addRevenue({
@@ -511,17 +511,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
           orderId: id,
           productName: productName
         });
-        
-        // Update stock if productId exists
-        if (currentMessage?.productId) {
-          const product = state.products.find(p => p.id === currentMessage.productId);
-          if (product) {
-            const newStock = Math.max(0, (product.stock || 0) - (currentMessage.quantity || 1));
-            await updateProduct(currentMessage.productId, {
-              stock: newStock,
-              inStock: newStock > 0
-            });
-          }
+      }
+      
+      // Update stock when order is delivered
+      if (message.orderStatus === 'delivered' && currentMessage?.orderStatus !== 'delivered' && currentMessage?.productId) {
+        const product = state.products.find(p => p.id === currentMessage.productId);
+        if (product) {
+          const newStock = Math.max(0, (product.stock || 0) - (currentMessage.quantity || 1));
+          await updateProduct(currentMessage.productId, {
+            stock: newStock,
+            inStock: newStock > 0
+          });
         }
       }
     } catch (error) {

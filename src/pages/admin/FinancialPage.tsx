@@ -544,13 +544,9 @@ const FinancialPage: React.FC = () => {
         <div className="space-y-6">
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-bold text-gray-800">Gestion des Revenus</h2>
-            <button
-              onClick={() => setShowRevenueForm(true)}
-              className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-xl hover:from-green-700 hover:to-emerald-700 transition-colors flex items-center space-x-2 shadow-lg"
-            >
-              <Plus className="w-5 h-5" />
-              <span>Ajouter un Revenu</span>
-            </button>
+            <div className="text-sm text-gray-600 bg-blue-50 px-4 py-2 rounded-lg border border-blue-200">
+              <span className="font-medium">ℹ️ Les revenus sont ajoutés automatiquement lors de la confirmation des commandes</span>
+            </div>
           </div>
 
           {/* Revenues List */}
@@ -578,10 +574,10 @@ const FinancialPage: React.FC = () => {
                         <td className="px-6 py-4">
                           <span className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${
                             revenue.source === 'order' 
-                              ? 'bg-blue-100 text-blue-800' 
+                              ? 'bg-green-100 text-green-800' 
                               : 'bg-gray-100 text-gray-800'
                           }`}>
-                            {revenue.source === 'order' ? 'Commande' : 'Manuel'}
+                            {revenue.source === 'order' ? '🛒 Commande Confirmée' : 'Manuel'}
                           </span>
                         </td>
                         <td className="px-6 py-4 text-gray-600">

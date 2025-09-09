@@ -49,9 +49,9 @@ const ContactPage: React.FC = () => {
       deliveryAddress: formData.deliveryAddress || undefined,
       productId: productId,
       productName: product?.name,
-      quantity: isCartOrder ? state.cart.reduce((total, item) => total + item.quantity, 0) : 1,
+      quantity: isCartOrder ? state.cart.reduce((total, item) => total + (item.quantity || 1), 0) : 1,
       orderPrice: isCartOrder 
-        ? state.cart.reduce((total, item) => total + (item.product.price * item.quantity), 0)
+        ? state.cart.reduce((total, item) => total + (item.product.price * (item.quantity || 1)), 0)
         : product?.price,
       createdAt: new Date(),
       read: false,
@@ -117,7 +117,7 @@ const ContactPage: React.FC = () => {
               <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 mb-8 border border-green-200">
                 <h3 className="font-semibold text-green-800 mb-4 flex items-center">
                   <ShoppingCart className="w-5 h-5 text-green-600 mr-2" />
-                  Commande de {state.cart.length} figurine{state.cart.length > 1 ? 's' : ''}
+                  Commande de {state.cart.reduce((total, item) => total + (item.quantity || 1), 0)} figurine{state.cart.reduce((total, item) => total + (item.quantity || 1), 0) > 1 ? 's' : ''}
                 </h3>
                 <div className="space-y-3">
                   {state.cart.map(item => (
@@ -133,7 +133,7 @@ const ContactPage: React.FC = () => {
                           <p className="text-sm text-gray-600">Variante: {item.selectedVariant}</p>
                         )}
                         <p className="text-sm text-green-600 font-medium">
-                          {item.product.price.toFixed(2)} DH × {item.quantity} = {(item.product.price * item.quantity).toFixed(2)} DH
+                          {item.product.price.toFixed(2)} DH × {item.quantity || 1} = {(item.product.price * (item.quantity || 1)).toFixed(2)} DH
                         </p>
                       </div>
                     </div>
@@ -143,7 +143,7 @@ const ContactPage: React.FC = () => {
                   <div className="flex justify-between items-center">
                     <span className="font-bold text-green-800">Total:</span>
                     <span className="text-2xl font-bold text-green-600">
-                      {state.cart.reduce((total, item) => total + (item.product.price * item.quantity), 0).toFixed(2)} DH
+                      {state.cart.reduce((total, item) => total + (item.product.price * (item.quantity || 1)), 0).toFixed(2)} DH
                     </span>
                   </div>
                 </div>
