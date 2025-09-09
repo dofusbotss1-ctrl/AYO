@@ -803,17 +803,6 @@ const FinancialPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Date *</label>
-                <input
-                  type="date"
-                  value={revenueForm.date}
-                  onChange={(e) => setRevenueForm({ ...revenueForm, date: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300"
-                  required
-                />
-              </div>
-
-              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Source *</label>
                 <select
                   value={revenueForm.source}
@@ -824,6 +813,17 @@ const FinancialPage: React.FC = () => {
                   <option value="manual">Manuel</option>
                   <option value="order">Commande</option>
                 </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Date *</label>
+                <input
+                  type="date"
+                  value={revenueForm.date}
+                  onChange={(e) => setRevenueForm({ ...revenueForm, date: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300"
+                  required
+                />
               </div>
 
               <div className="flex space-x-4 pt-4">
