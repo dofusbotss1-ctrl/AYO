@@ -31,6 +31,18 @@ const ContactPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+  // Calculs du panier pour l'affichage
+  const cartItemsCount = state.cart.reduce((total, item) => {
+    const itemQuantity = typeof item.quantity === 'number' && item.quantity > 0 ? item.quantity : 1;
+    return total + itemQuantity;
+  }, 0);
+
+  const cartTotal = state.cart.reduce((total, item) => {
+    const itemQuantity = typeof item.quantity === 'number' && item.quantity > 0 ? item.quantity : 1;
+    const itemPrice = typeof item.price === 'number' && item.price > 0 ? item.price : 0;
+    return total + (itemPrice * itemQuantity);
+  }, 0);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.phone) return;
