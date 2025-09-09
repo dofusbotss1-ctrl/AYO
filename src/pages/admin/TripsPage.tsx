@@ -437,13 +437,12 @@ const ProductsPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={addImageField}
-                      className="text-blue-600 hover:text-blue-700 font-semibold"
+                      className="w-full px-4 py-4 border-2 border-dashed border-slate-300 rounded-xl text-slate-600 hover:border-blue-400 hover:text-blue-600 transition-all duration-300"
                     >
                       + Ajouter une image
                     </button>
                   </div>
                 </div>
-
 
                 <div className="flex space-x-4 pt-6">
                   <button
@@ -515,20 +514,13 @@ const ProductsPage: React.FC = () => {
                           </div>
                         ) : (
                           <span className="text-lg">{product.price} DH</span>
-                      <div className="flex items-center space-x-2">
-                        <span className={`inline-flex px-3 py-2 text-sm font-bold rounded-full ${
-                          (product.stock || 0) > 5 
-                            ? 'bg-green-100 text-green-800' 
-                            : (product.stock || 0) > 0
-                            ? 'bg-orange-100 text-orange-800'
-                            : 'bg-red-100 text-red-800'
-                        }`}>
-                          {product.stock || 0}
-                        </span>
-                        <span className="text-xs text-slate-500">
-                          {(product.stock || 0) > 5 ? 'Stock OK' : (product.stock || 0) > 0 ? 'Stock faible' : 'Rupture'}
-                        </span>
+                        )}
                       </div>
+                    </td>
+                    <td className="px-8 py-6">
+                      <span className="text-slate-600">
+                        {product.size || 'Non spécifiée'}
+                      </span>
                     </td>
                     <td className="px-8 py-6">
                       <div className="flex items-center space-x-2">
