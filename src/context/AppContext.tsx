@@ -521,14 +521,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const updateMessage = async (id: string, message: Partial<ContactMessage>) => {
     try {
-      // Check if order status is being updated to 'received'
+      // Check if order status is being updated to 'delivered'
       const currentMessage = state.messages.find(m => m.id === id);
-      const isOrderConfirmed = message.orderStatus === 'confirmed' && currentMessage?.orderStatus !== 'confirmed';
+      const isOrderDelivered = message.orderStatus === 'delivered' && currentMessage?.orderStatus !== 'delivered';
       
       await messagesService.update(id, message);
       
-      // If order is confirmed, add revenue automatically
-      if (isOrderConfirmed && currentMessage?.orderPrice) {
+      // If order is delivered, add revenue automatically
+      if (isOrderDelivered && currentMessage?.orderPrice) {
         // Add revenue
         const productName = currentMessage?.productName || 'Figurine';
         await addRevenue({
@@ -541,8 +541,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
         });
       }
       
-      // Update stock when order is delivered
-      if (message.orderStatus === 'delivered' && currentMessage?.orderStatus !== 'delivered' && currentMessage?.productId) {
+      // Update stock when order is delivered (keep this logic)
+      if (isOrderDelivered && currentMessage?.productId) {
         const product = state.products.find(p => p.id === currentMessage.productId);
         if (product) {
           const newStock = Math.max(0, (product.stock || 0) - (currentMessage.quantity || 1));
