@@ -213,6 +213,17 @@ const FinancialPage: React.FC = () => {
     }
   };
 
+  const handleDeleteRevenue = async (id: string) => {
+    if (confirm('Êtes-vous sûr de vouloir supprimer ce revenu ?')) {
+      try {
+        await deleteRevenue(id);
+        alert('Revenu supprimé avec succès !');
+      } catch (error) {
+        console.error('Erreur:', error);
+        alert('Erreur lors de la suppression');
+      }
+    }
+  };
   const exportToCSV = () => {
     const csvData = [
       ['Type', 'Titre', 'Catégorie', 'Montant', 'Date', 'Notes'],
@@ -560,6 +571,7 @@ const FinancialPage: React.FC = () => {
                       <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">Montant</th>
                       <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">Source</th>
                       <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">Date</th>
+                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
@@ -582,6 +594,15 @@ const FinancialPage: React.FC = () => {
                         </td>
                         <td className="px-6 py-4 text-gray-600">
                           {revenue.date.toLocaleDateString('fr-FR')}
+                        </td>
+                        <td className="px-6 py-4">
+                          <button
+                            onClick={() => handleDeleteRevenue(revenue.id)}
+                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            title="Supprimer ce revenu"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
                         </td>
                       </tr>
                     ))}

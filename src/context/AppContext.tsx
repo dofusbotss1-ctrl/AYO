@@ -318,6 +318,7 @@ const AppContext = createContext<{
   updateInvestment: (id: string, investment: Partial<Investment>) => Promise<void>;
   deleteInvestment: (id: string) => Promise<void>;
   addRevenue: (revenue: Omit<Revenue, 'id'>) => Promise<void>;
+  deleteRevenue: (id: string) => Promise<void>;
   getFinancialSummary: () => {
     totalRevenue: number;
     totalCharges: number;
@@ -933,6 +934,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       updateInvestment,
       deleteInvestment,
       addRevenue,
+      deleteRevenue,
       deleteRevenue,
       getFinancialSummary,
       addToCart,
