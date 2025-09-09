@@ -348,31 +348,50 @@ const MessagesPage: React.FC = () => {
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">Actions:</h3>
                   
                   {/* Order Management */}
-                  {selectedMessage.orderStatus === 'pending' && (
+                  {(!selectedMessage.orderStatus || selectedMessage.orderStatus === 'pending') && (
                     <div className="mb-6 p-4 bg-cyan-50 border border-cyan-200 rounded-lg">
-                      <h4 className="font-medium text-cyan-800 mb-3">Gestion de la commande:</h4>
-                      <div className="flex flex-wrap gap-3">
-                        <button
-                          onClick={() => handleOrderStatusChange(selectedMessage.id, 'confirmed')}
-                          className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors flex items-center space-x-2"
-                        >
-                          <CheckCircle className="w-4 h-4" />
-                          <span>Confirmer commande</span>
-                        </button>
-                        <button
-                          onClick={() => handleOrderStatusChange(selectedMessage.id, 'cancelled')}
-                          className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors flex items-center space-x-2"
-                        >
-                          <XCircle className="w-4 h-4" />
-                          <span>Rejeter commande</span>
-                        </button>
+                      <h4 className="font-medium text-cyan-800 mb-3">Nouvelle commande - Actions:</h4>
+                      <div className="space-y-3">
+                        <div className="flex items-center space-x-3">
+                          <input
+                            type="number"
+                            value={orderPrice}
+                            onChange={(e) => setOrderPrice(e.target.value)}
+                            placeholder="Prix de la commande (DH)"
+                            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
+                          />
+                        </div>
+                        <div className="flex flex-wrap gap-3">
+                          <button
+                            onClick={() => {
+                              const price = parseFloat(orderPrice);
+                              if (!price || price <= 0) {
+                                alert('Veuillez entrer un prix valide');
+                                return;
+                              }
+                              handleOrderStatusChange(selectedMessage.id, 'confirmed', price);
+                              setOrderPrice('');
+                            }}
+                            className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors flex items-center space-x-2"
+                          >
+                            <CheckCircle className="w-4 h-4" />
+                            <span>Confirmer commande</span>
+                          </button>
+                          <button
+                            onClick={() => handleOrderStatusChange(selectedMessage.id, 'cancelled')}
+                            className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors flex items-center space-x-2"
+                          >
+                            <XCircle className="w-4 h-4" />
+                            <span>Rejeter commande</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   )}
                   
                   {selectedMessage.orderStatus === 'confirmed' && (
-                    <div className="mb-6 p-4 bg-teal-50 border border-teal-200 rounded-lg">
-                      <h4 className="font-medium text-teal-800 mb-3">Commande confirmée - Actions:</h4>
+                    <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                      <h4 className="font-medium text-blue-800 mb-3">Commande confirmée ({selectedMessage.orderPrice} DH) - Actions:</h4>
                       <div className="flex space-x-3">
                         <button
                           onClick={() => handleOrderStatusChange(selectedMessage.id, 'sent')}
@@ -394,21 +413,21 @@ const MessagesPage: React.FC = () => {
                   
                   {selectedMessage.orderStatus === 'sent' && (
                     <div className="mb-6 p-4 bg-purple-50 border border-purple-200 rounded-lg">
-                      <h4 className="font-medium text-purple-800 mb-3">Commande envoyée - Actions:</h4>
+                      <h4 className="font-medium text-purple-800 mb-3">Commande envoyée ({selectedMessage.orderPrice} DH) - Actions:</h4>
                       <div className="flex space-x-3">
                         <button
                           onClick={() => handleOrderStatusChange(selectedMessage.id, 'received')}
                           className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors flex items-center space-x-2"
                         >
                           <CheckCircle className="w-4 h-4" />
-                          <span>Commande reçue</span>
+                          <span>Reçue</span>
                         </button>
                         <button
                           onClick={() => handleOrderStatusChange(selectedMessage.id, 'returned')}
                           className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors flex items-center space-x-2"
                         >
                           <XCircle className="w-4 h-4" />
-                          <span>Commande retournée</span>
+                          <span>Retournée</span>
                         </button>
                       </div>
                     </div>
