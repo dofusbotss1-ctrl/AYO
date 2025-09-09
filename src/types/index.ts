@@ -544,10 +544,13 @@ const FinancialPage: React.FC = () => {
         <div className="space-y-6">
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-bold text-gray-800">Gestion des Revenus</h2>
-            <div className="bg-gradient-to-r from-green-100 to-emerald-100 px-6 py-3 rounded-xl border border-green-200">
-              <p className="text-green-800 font-medium text-sm">
-                ℹ️ Les revenus sont automatiquement générés lors des commandes confirmées
-              </p>
+            <button
+              onClick={() => setShowRevenueForm(true)}
+              className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-xl hover:from-green-700 hover:to-emerald-700 transition-colors flex items-center space-x-2 shadow-lg"
+            >
+              <Plus className="w-5 h-5" />
+              <span>Ajouter un Revenu</span>
+            </button>
           </div>
 
           {/* Revenues List */}
