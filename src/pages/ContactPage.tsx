@@ -17,6 +17,7 @@ const ContactPage: React.FC = () => {
     name: '',
     email: '',
     phone: '',
+    deliveryAddress: '',
     message: prefilledMessage ? decodeURIComponent(prefilledMessage) : productId ? `Bonjour, je suis intéressé(e) par la figurine: ${
       state.products.find(p => p.id === productId)?.name || ''
     }${selectedDate ? ` - Date: ${selectedDate}` : ''}` : '',
@@ -28,6 +29,12 @@ const ContactPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.phone || !formData.message) return;
+    
+    // Vérifier l'adresse de livraison pour les commandes panier
+    if (isCartOrder && !formData.deliveryAddress.trim()) {
+      alert('Veuillez renseigner votre adresse de livraison');
+      return;
+    }
 
     setIsSubmitting(true);
 
@@ -36,6 +43,7 @@ const ContactPage: React.FC = () => {
       email: formData.email,
       phone: formData.phone,
       message: formData.message,
+      deliveryAddress: formData.deliveryAddress || undefined,
       productId: productId,
       createdAt: new Date(),
       read: false,
@@ -44,7 +52,7 @@ const ContactPage: React.FC = () => {
     try {
       await addMessage(newMessage);
       setIsSubmitted(true);
-      setFormData({ name: '', email: '', phone: '', message: '' });
+      setFormData({ name: '', email: '', phone: '', message: '', deliveryAddress: '' });
     } catch (error) {
       console.error('Erreur lors de l\'envoi:', error);
       alert('Erreur lors de l\'envoi du message');
