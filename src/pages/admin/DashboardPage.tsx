@@ -46,7 +46,7 @@ const DashboardPage: React.FC = () => {
     { 
       path: '/admin/dashboard/trips', 
       icon: Package, 
-      label: 'Voyages' 
+      label: 'Produit' 
     },
     { 
       path: '/admin/dashboard/categories', 
