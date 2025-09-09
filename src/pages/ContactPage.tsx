@@ -50,6 +50,9 @@ const ContactPage: React.FC = () => {
       productId: productId,
       productName: product?.name,
       quantity: isCartOrder ? state.cart.reduce((total, item) => total + item.quantity, 0) : 1,
+      orderPrice: isCartOrder 
+        ? state.cart.reduce((total, item) => total + (item.product.price * item.quantity), 0)
+        : product?.price,
       createdAt: new Date(),
       read: false,
     };

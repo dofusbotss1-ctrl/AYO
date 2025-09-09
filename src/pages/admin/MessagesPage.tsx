@@ -261,6 +261,8 @@ const OrdersPage: React.FC = () => {
                         <div className="flex items-center space-x-2">
                           <input
                             type="number"
+                            step="0.01"
+                            min="0"
                             value={tempPrice}
                             onChange={(e) => setTempPrice(e.target.value)}
                             className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
@@ -285,7 +287,7 @@ const OrdersPage: React.FC = () => {
                       ) : (
                         <div className="flex items-center space-x-2">
                           {order.orderPrice ? (
-                            <span className="font-bold text-green-600">
+                            <span className="font-bold text-green-600 text-sm">
                               {order.orderPrice} DH
                             </span>
                           ) : (
@@ -296,7 +298,8 @@ const OrdersPage: React.FC = () => {
                               setEditingPrice(order.id);
                               setTempPrice(order.orderPrice?.toString() || '');
                             }}
-                            className="text-blue-600 hover:text-blue-800"
+                            className="text-blue-600 hover:text-blue-800 p-1 hover:bg-blue-50 rounded"
+                            title="Modifier le prix"
                           >
                             <Edit className="w-3 h-3" />
                           </button>
