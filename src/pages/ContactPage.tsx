@@ -237,6 +237,24 @@ const ContactPage: React.FC = () => {
                   />
                 </div>
 
+                {isCartOrder && (
+                  <div>
+                    <label htmlFor="deliveryAddress" className="block text-sm font-semibold text-slate-700 mb-3">
+                      Adresse de livraison *
+                    </label>
+                    <textarea
+                      id="deliveryAddress"
+                      name="deliveryAddress"
+                      value={formData.deliveryAddress}
+                      onChange={handleInputChange}
+                      required={isCartOrder}
+                      rows={3}
+                      className="w-full px-4 py-4 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-amber-100 focus:border-amber-500 transition-all duration-300 text-base"
+                      placeholder="Votre adresse complète de livraison..."
+                    />
+                  </div>
+                )}
+
                 <div>
                   <label htmlFor="message" className="block text-sm font-semibold text-slate-700 mb-3">
                     Message *

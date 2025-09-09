@@ -432,7 +432,7 @@ const DashboardPage: React.FC = () => {
                     <div className="flex items-center justify-between p-6 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl hover:shadow-md transition-all duration-300">
                       <div className="flex items-center space-x-4">
                         <CheckCircle className="w-5 h-5 lg:w-6 lg:h-6 text-blue-500" />
-                        <span className="text-sm lg:text-lg font-bold text-blue-700">Commandes Confirmées</span>
+                        <span className="text-sm lg:text-lg font-bold text-blue-700">Confirmées</span>
                       </div>
                       <span className="text-xl lg:text-2xl font-bold text-amber-600">
                         {state.messages ? state.messages.filter(m => m.orderStatus === 'confirmed').length : 0}
@@ -440,32 +440,30 @@ const DashboardPage: React.FC = () => {
                     </div>
                     <div className="flex items-center justify-between p-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl hover:shadow-md transition-all duration-300">
                       <div className="flex items-center space-x-4">
-                        <CheckCircle className="w-5 h-5 lg:w-6 lg:h-6 text-green-500" />
-                        <span className="text-sm lg:text-lg font-bold text-green-700">Reçues</span>
+                        <Truck className="w-5 h-5 lg:w-6 lg:h-6 text-green-500" />
+                        <span className="text-sm lg:text-lg font-bold text-green-700">Livrées</span>
                       </div>
                       <span className="text-xl lg:text-2xl font-bold text-green-600">
-                        {state.messages ? state.messages.filter(m => m.orderStatus === 'received').length : 0}
+                        {state.messages ? state.messages.filter(m => m.orderStatus === 'delivered').length : 0}
                       </span>
                     </div>
                     <div className="flex items-center justify-between p-6 bg-gradient-to-r from-red-50 to-pink-50 rounded-2xl hover:shadow-md transition-all duration-300">
                       <div className="flex items-center space-x-4">
                         <XCircle className="w-5 h-5 lg:w-6 lg:h-6 text-red-500" />
-                        <span className="text-sm lg:text-lg font-bold text-red-700">Retournées</span>
+                        <span className="text-sm lg:text-lg font-bold text-red-700">Annulées</span>
                       </div>
                       <span className="text-xl lg:text-2xl font-bold text-red-600">
-                        {state.messages ? state.messages.filter(m => m.orderStatus === 'returned').length : 0}
+                        {state.messages ? state.messages.filter(m => m.orderStatus === 'cancelled').length : 0}
                       </span>
                     </div>
                     <div className="pt-6 border-t-2 border-slate-200">
-                      <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl">
-                        <div className="flex items-center justify-between p-4 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-2xl">
+                      <div className="flex items-center justify-between p-4 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-2xl">
                           <span className="text-sm lg:text-lg font-bold text-slate-700">Total CA : </span>
                           <span className="text-xl lg:text-2xl font-bold text-amber-600">
-                            {state.messages
-                              ? state.messages.filter(m => m.orderStatus === 'received' && m.orderPrice)
+                            {state.messages 
+                              ? state.messages.filter(m => m.orderStatus === 'delivered' && m.orderPrice)
                                 .reduce((total, m) => total + (m.orderPrice || 0), 0) : 0} DH
                           </span>
-                        </div>
                       </div>
                     </div>
                   </div>
