@@ -13,6 +13,9 @@ const ContactPage: React.FC = () => {
   const isCartOrder = searchParams.get('cart') === 'true';
   const prefilledMessage = searchParams.get('message');
   
+  // Déterminer si on doit afficher l'adresse de livraison
+  const shouldShowDeliveryAddress = isCartOrder || productId;
+  
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -30,9 +33,9 @@ const ContactPage: React.FC = () => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.phone || !formData.message) return;
     
-    // Vérifier l'adresse de livraison pour les commandes panier
-    if (isCartOrder && !formData.deliveryAddress.trim()) {
-      alert('Veuillez renseigner votre adresse de livraison');
+    // Vérifier l'adresse de livraison pour les commandes panier et devis produit
+    if (shouldShowDeliveryAddress && !formData.deliveryAddress.trim()) {
+      alert('Veuillez renseigner votre adresse de livraison pour finaliser votre demande');
       return;
     }
 
@@ -245,20 +248,20 @@ const ContactPage: React.FC = () => {
                   />
                 </div>
 
-                {isCartOrder && (
+                {shouldShowDeliveryAddress && (
                   <div>
                     <label htmlFor="deliveryAddress" className="block text-sm font-semibold text-slate-700 mb-3">
-                      Adresse de livraison *
+                      Adresse de livraison {isCartOrder ? '*' : '(recommandée)'}
                     </label>
                     <textarea
                       id="deliveryAddress"
                       name="deliveryAddress"
                       value={formData.deliveryAddress}
                       onChange={handleInputChange}
-                      required={isCartOrder}
+                      required={shouldShowDeliveryAddress}
                       rows={3}
                       className="w-full px-4 py-4 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-amber-100 focus:border-amber-500 transition-all duration-300 text-base"
-                      placeholder="Votre adresse complète de livraison..."
+                      placeholder={isCartOrder ? "Votre adresse complète de livraison..." : "Votre adresse pour l'estimation des frais de livraison..."}
                     />
                   </div>
                 )}
