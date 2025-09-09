@@ -41,6 +41,27 @@ const ContactPage: React.FC = () => {
 
     setIsSubmitting(true);
 
+    // Calculer les données de commande pour le panier
+    let totalQuantity = 1;
+    let totalPrice = product?.price || 0;
+    let productNames = product?.name || '';
+
+    if (isCartOrder && state.cart.length > 0) {
+      totalQuantity = state.cart.reduce((total, item) => {
+        const quantity = typeof item.quantity === 'number' ? item.quantity : 1;
+        return total + quantity;
+      }, 0);
+      
+      totalPrice = state.cart.reduce((total, item) => {
+        const quantity = typeof item.quantity === 'number' ? item.quantity : 1;
+        return total + (item.product.price * quantity);
+      }, 0);
+      
+      productNames = state.cart.map(item => {
+        const quantity = typeof item.quantity === 'number' ? item.quantity : 1;
+        return `${item.product.name} (x${quantity})`;
+      }).join(', ');
+    }
     const newMessage: Omit<ContactMessage, 'id'> = {
       name: formData.name,
       email: formData.email,
@@ -48,11 +69,9 @@ const ContactPage: React.FC = () => {
       message: formData.message,
       deliveryAddress: formData.deliveryAddress || undefined,
       productId: productId,
-      productName: product?.name,
-      quantity: isCartOrder ? state.cart.reduce((total, item) => total + (item.quantity || 1), 0) : 1,
-      orderPrice: isCartOrder 
-        ? state.cart.reduce((total, item) => total + (item.product.price * (item.quantity || 1)), 0)
-        : product?.price,
+      productName: productNames,
+      quantity: totalQuantity,
+      orderPrice: totalPrice,
       createdAt: new Date(),
       read: false,
     };

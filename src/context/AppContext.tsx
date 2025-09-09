@@ -786,8 +786,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const getCartTotal = () => {
     const total = state.cart.reduce((total, item) => {
-      const price = item.selectedVariant?.price || item.product.price;
-      return total + (price * item.quantity);
+      const price = item.product.price;
+      const quantity = typeof item.quantity === 'number' ? item.quantity : 1;
+      return total + (price * quantity);
     }, 0);
     return Math.round(total * 100) / 100; // Arrondir à 2 décimales
   };

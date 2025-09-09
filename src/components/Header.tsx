@@ -226,8 +226,9 @@ const Header: React.FC = () => {
                             <span className="font-bold text-lg sm:text-xl text-blue-600">
                             <span className="font-bold text-lg sm:text-xl text-amber-600">
                               {state.cart.reduce((total, item) => {
-                                const price = item.selectedVariant?.price || item.product.price;
-                                return total + (price * item.quantity);
+                                const price = item.product.price;
+                                const quantity = typeof item.quantity === 'number' ? item.quantity : 1;
+                                return total + (price * quantity);
                               }, 0).toFixed(2)} DH
                             </span>
                             </span>
