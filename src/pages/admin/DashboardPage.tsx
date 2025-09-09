@@ -20,7 +20,8 @@ import {
   Menu,
   X,
   DollarSign,
-  PieChart
+  PieChart,
+  Truck
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
