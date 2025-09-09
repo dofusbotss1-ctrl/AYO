@@ -828,6 +828,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Sauvegarder le panier dans localStorage à chaque changement
   useEffect(() => {
+    console.log('Saving cart to localStorage:', state.cart);
     localStorage.setItem('ayoFigurine_cart', JSON.stringify(state.cart));
   }, [state.cart]);
 

@@ -62,17 +62,21 @@ const ContactPage: React.FC = () => {
     let orderMessage = '';
 
     if (isCartOrder && state.cart.length > 0) {
-      totalQuantity = state.cart.reduce((total, item) => total + item.quantity, 0);
+      totalQuantity = cartItemsCount;
       
-      totalPrice = state.cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+      totalPrice = cartTotal;
       
       productNames = state.cart.map(item => {
-        return `${item.productName} (x${item.quantity})`;
+        const itemQuantity = typeof item.quantity === 'number' && item.quantity > 0 ? item.quantity : 1;
+        return `${item.productName} (x${itemQuantity})`;
       }).join(', ');
       
       // Message automatique pour commande panier
       orderMessage = `COMMANDE PANIER\n\nProduits commandés:\n${state.cart.map(item => 
-        `• ${item.productName} - Quantité: ${item.quantity} - Prix: ${(item.price * item.quantity).toFixed(2)} DH`
+        {
+          const itemQuantity = typeof item.quantity === 'number' && item.quantity > 0 ? item.quantity : 1;
+          return `• ${item.productName} - Quantité: ${itemQuantity} - Prix: ${(item.price * itemQuantity).toFixed(2)} DH`;
+        }
       ).join('\n')}\n\nTotal: ${totalPrice.toFixed(2)} DH\n\nAdresse de livraison:\n${formData.deliveryAddress}`;
     } else if (product) {
       totalQuantity = quantity;
