@@ -437,12 +437,13 @@ const ProductsPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={addImageField}
-                      className="w-full px-4 py-4 border-2 border-dashed border-slate-300 rounded-xl text-slate-600 hover:border-blue-400 hover:text-blue-600 transition-all duration-300"
+                      className="text-blue-600 hover:text-blue-700 font-semibold"
                     >
                       + Ajouter une image
                     </button>
                   </div>
                 </div>
+
 
                 <div className="flex space-x-4 pt-6">
                   <button
@@ -517,10 +518,8 @@ const ProductsPage: React.FC = () => {
                         )}
                       </div>
                     </td>
-                    <td className="px-8 py-6">
-                      <span className="text-slate-600">
-                        {product.size || 'Non spécifiée'}
-                      </span>
+                    <td className="px-8 py-6 text-slate-600 font-medium">
+                      {product.size || 'Non spécifiée'}
                     </td>
                     <td className="px-8 py-6">
                       <div className="flex items-center space-x-2">
