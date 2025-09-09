@@ -42,25 +42,22 @@ const ContactPage: React.FC = () => {
     setIsSubmitting(true);
 
     // Calculer les données de commande pour le panier
-    let totalQuantity = 1;
-    let totalPrice = product?.price || 0;
-    let productNames = product?.name || '';
+    let totalQuantity = 0;
+    let totalPrice = 0;
+    let productNames = '';
 
     if (isCartOrder && state.cart.length > 0) {
-      totalQuantity = state.cart.reduce((total, item) => {
-        const quantity = typeof item.quantity === 'number' ? item.quantity : 1;
-        return total + quantity;
-      }, 0);
+      totalQuantity = state.cart.reduce((total, item) => total + item.quantity, 0);
       
-      totalPrice = state.cart.reduce((total, item) => {
-        const quantity = typeof item.quantity === 'number' ? item.quantity : 1;
-        return total + (item.product.price * quantity);
-      }, 0);
+      totalPrice = state.cart.reduce((total, item) => total + (item.price * item.quantity), 0);
       
       productNames = state.cart.map(item => {
-        const quantity = typeof item.quantity === 'number' ? item.quantity : 1;
-        return `${item.product.name} (x${quantity})`;
+        return `${item.productName} (x${item.quantity})`;
       }).join(', ');
+    } else if (product) {
+      totalQuantity = quantity;
+      totalPrice = product.price * quantity;
+      productNames = product.name;
     }
     const newMessage: Omit<ContactMessage, 'id'> = {
       name: formData.name,
@@ -142,17 +139,17 @@ const ContactPage: React.FC = () => {
                   {state.cart.map(item => (
                     <div key={item.id} className="flex items-center space-x-3 p-3 bg-white rounded-lg">
                       <img
-                        src={item.product.images[0]}
-                        alt={item.product.name}
+                        src={item.productImage}
+                        alt={item.productName}
                         className="w-12 h-12 object-cover rounded-lg"
                       />
                       <div className="flex-1">
-                        <p className="font-medium text-gray-800">{item.product.name}</p>
+                        <p className="font-medium text-gray-800">{item.productName}</p>
                         {item.selectedVariant && (
                           <p className="text-sm text-gray-600">Variante: {item.selectedVariant}</p>
                         )}
                         <p className="text-sm text-green-600 font-medium">
-                          {item.product.price.toFixed(2)} DH × {item.quantity || 1} = {(item.product.price * (item.quantity || 1)).toFixed(2)} DH
+                          {item.price.toFixed(2)} DH × {item.quantity} = {(item.price * item.quantity).toFixed(2)} DH
                         </p>
                       </div>
                     </div>
@@ -162,7 +159,7 @@ const ContactPage: React.FC = () => {
                   <div className="flex justify-between items-center">
                     <span className="font-bold text-green-800">Total:</span>
                     <span className="text-2xl font-bold text-green-600">
-                      {state.cart.reduce((total, item) => total + (item.product.price * (item.quantity || 1)), 0).toFixed(2)} DH
+                      {state.cart.reduce((total, item) => total + (item.price * item.quantity), 0).toFixed(2)} DH
                     </span>
                   </div>
                 </div>
@@ -186,6 +183,9 @@ const ContactPage: React.FC = () => {
                     <p className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                       {product.price} DH
                     </p>
+                   <p className="text-sm text-blue-600 font-medium">
+                     Quantité: {quantity}
+                   </p>
                     {selectedDate && (
                       <div className="mt-2">
                         <p className="text-sm text-blue-600 font-medium">

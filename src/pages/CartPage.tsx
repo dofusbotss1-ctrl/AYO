@@ -17,17 +17,17 @@ const CartPage: React.FC = () => {
   const generateCartMessage = () => {
     if (state.cart.length === 0) return '';
     
-    let message = 'Bonjour, je souhaite réserver les voyages suivants :\n\n';
+    let message = 'Bonjour, je souhaite commander les figurines suivantes :\n\n';
     
     state.cart.forEach((item, index) => {
-      message += `${index + 1}. ${item.product.name}`;
+      message += `${index + 1}. ${item.productName}`;
       if (item.selectedVariant) {
-        message += ` - Variante: ${item.selectedVariant.size || ''} ${item.selectedVariant.finish || ''}`;
+        message += ` - Variante: ${item.selectedVariant}`;
       }
-      message += ` - Quantité: ${item.quantity} - Prix: ${item.product.price * item.quantity} DH\n`;
+      message += ` - Quantité: ${item.quantity} - Prix: ${(item.price * item.quantity).toFixed(2)} DH\n`;
     });
     
-    message += `\nTotal: ${getCartTotal()} DH\n\nMerci de me contacter pour finaliser la commande.`;
+    message += `\nTotal: ${getCartTotal().toFixed(2)} DH\n\nMerci de me contacter pour finaliser la commande.`;
     
     return encodeURIComponent(message);
   };
@@ -95,32 +95,22 @@ const CartPage: React.FC = () => {
                 {state.cart.map(item => (
                   <div key={item.id} className="p-6 hover:bg-gray-50 transition-colors">
                     <div className="flex items-start space-x-4">
-                      {/* Trip Image */}
-                      <Link to={`/product/${item.product.id}`}>
-                        <img
-                          src={item.product.images[0]}
-                          alt={item.product.name}
-                          className="w-24 h-24 object-cover rounded-xl shadow-md hover:shadow-lg transition-shadow"
-                        />
-                      </Link>
+                      {/* Product Image */}
+                      <img
+                        src={item.productImage}
+                        alt={item.productName}
+                        className="w-24 h-24 object-cover rounded-xl shadow-md hover:shadow-lg transition-shadow"
+                      />
                       
-                      {/* Trip Info */}
+                      {/* Product Info */}
                       <div className="flex-1">
-                        <Link 
-                          to={`/product/${item.product.id}`}
-                          className="block hover:text-orange-600 transition-colors"
-                        >
-                          <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                            {item.product.name}
-                          </h3>
-                        </Link>
+                        <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                          {item.productName}
+                        </h3>
                         
                         {item.selectedVariant && (
                           <p className="text-sm text-gray-600 mb-2">
-                            Variante: <span className="font-medium">
-                              {item.selectedVariant.size && `${item.selectedVariant.size}`}
-                              {item.selectedVariant.finish && ` - ${item.selectedVariant.finish}`}
-                            </span>
+                            Variante: <span className="font-medium">{item.selectedVariant}</span>
                           </p>
                         )}
                         
@@ -158,10 +148,10 @@ const CartPage: React.FC = () => {
                           {/* Price */}
                           <div className="text-right">
                             <div className="text-lg font-bold text-orange-600">
-                              {(item.product.price * item.quantity).toFixed(2)} DH
+                              {(item.price * item.quantity).toFixed(2)} DH
                             </div>
                             <div className="text-sm text-gray-500">
-                              {item.product.price.toFixed(2)} DH × {item.quantity}
+                              {item.price.toFixed(2)} DH × {item.quantity}
                             </div>
                           </div>
                         </div>
@@ -199,7 +189,7 @@ const CartPage: React.FC = () => {
                 </div>
               </div>
               
-              {/* Reservation Button */}
+              {/* Order Button */}
               <Link
                 to={`/contact?cart=true&message=${generateCartMessage()}`}
                 onClick={() => {

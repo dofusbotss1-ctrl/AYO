@@ -200,21 +200,21 @@ const Header: React.FC = () => {
                           {state.cart.map(item => (
                             <div key={item.id} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
                               <img
-                                src={item.product.images[0]}
-                                alt={item.product.name}
+                                src={item.productImage}
+                                alt={item.productName}
                                 className="w-12 h-12 object-cover rounded-lg flex-shrink-0"
                               />
                               <div className="flex-1 min-w-0">
                                 <p className="font-medium text-sm text-gray-800 truncate">
-                                  {item.product.name}
+                                  {item.productName}
                                 </p>
                                 {item.selectedVariant && (
                                   <p className="text-xs text-gray-600 truncate">
-                                    {item.selectedVariant.size} - {item.selectedVariant.finish}
+                                    {item.selectedVariant}
                                   </p>
                                 )}
                                 <p className="text-sm font-bold text-blue-600 truncate">
-                                  {item.selectedVariant?.price || item.product.price} DH x {item.quantity}
+                                  {item.price} DH x {item.quantity}
                                 </p>
                               </div>
                             </div>
@@ -224,13 +224,7 @@ const Header: React.FC = () => {
                           <div className="flex justify-between items-center mb-3">
                             <span className="font-bold text-gray-800">Total:</span>
                             <span className="font-bold text-lg sm:text-xl text-blue-600">
-                            <span className="font-bold text-lg sm:text-xl text-amber-600">
-                              {state.cart.reduce((total, item) => {
-                                const price = item.product.price;
-                                const quantity = typeof item.quantity === 'number' ? item.quantity : 1;
-                                return total + (price * quantity);
-                              }, 0).toFixed(2)} DH
-                            </span>
+                              {getCartTotal().toFixed(2)} DH
                             </span>
                           </div>
                           <Link

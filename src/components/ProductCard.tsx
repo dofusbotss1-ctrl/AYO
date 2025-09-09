@@ -18,14 +18,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     e.preventDefault();
     e.stopPropagation();
     
-    // Si le produit a des variantes, rediriger vers la page de détail
-    if (product.variants && product.variants.length > 0) {
+    // Si le produit a des tailles, rediriger vers la page de détail
+    if (product.sizes && product.sizes.length > 0) {
       window.location.href = `/product/${product.id}`;
       return;
     }
     
     // Sinon, ajouter directement au panier
-    addToCart(product, undefined, 1);
+    addToCart(product, '', 1);
     alert(`${product.name} ajouté au panier !`);
   };
 

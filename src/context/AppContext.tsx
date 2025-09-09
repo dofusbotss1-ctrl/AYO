@@ -11,7 +11,16 @@ interface AppState {
   charges: Charge[];
   investments: Investment[];
   revenues: Revenue[];
-  cart: CartItem[];
+  cart: {
+    id: string;
+    productId: string;
+    productName: string;
+    productImage: string;
+    price: number;
+    quantity: number;
+    selectedVariant?: string;
+    addedAt: Date;
+  }[];
   user: User;
   searchQuery: string;
   selectedCategory: string;
@@ -56,8 +65,8 @@ type AppAction =
   | { type: 'LOGOUT' }
   | { type: 'SET_SEARCH'; payload: string }
   | { type: 'SET_CATEGORY_FILTER'; payload: string }
-  | { type: 'ADD_TO_CART'; payload: CartItem }
-  | { type: 'SET_CART'; payload: CartItem[] }
+  | { type: 'ADD_TO_CART'; payload: { product: Product; quantity: number; selectedVariant?: string } }
+  | { type: 'SET_CART'; payload: any[] }
   | { type: 'REMOVE_FROM_CART'; payload: string }
   | { type: 'UPDATE_CART_QUANTITY'; payload: { id: string; quantity: number } }
   | { type: 'CLEAR_CART' }
@@ -223,20 +232,32 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
     case 'SET_CATEGORY_FILTER':
       return { ...state, selectedCategory: action.payload };
     case 'ADD_TO_CART':
-      // Vérifier si le produit avec la même taille existe déjà
+      const newItem = {
+        id: `${action.payload.product.id}-${action.payload.selectedVariant || 'default'}-${Date.now()}`,
+        productId: action.payload.product.id,
+        productName: action.payload.product.name,
+        productImage: action.payload.product.images[0],
+        price: action.payload.product.price,
+        quantity: action.payload.quantity,
+        selectedVariant: action.payload.selectedVariant,
+        addedAt: new Date()
+      };
+      
+      // Vérifier si le produit existe déjà
       const existingItemIndex = state.cart.findIndex(
-        item => item.product.id === action.payload.product.id && 
-                item.selectedVariant?.id === action.payload.selectedVariant?.id
+        item => item.productId === action.payload.product.id && 
+                item.selectedVariant === action.payload.selectedVariant
       );
       
       if (existingItemIndex >= 0) {
-        // Augmenter la quantité si l'item existe déjà
         const updatedCart = [...state.cart];
-        updatedCart[existingItemIndex].quantity += action.payload.quantity;
+        updatedCart[existingItemIndex] = {
+          ...updatedCart[existingItemIndex],
+          quantity: updatedCart[existingItemIndex].quantity + action.payload.quantity
+        };
         return { ...state, cart: updatedCart };
       } else {
-        // Ajouter un nouvel item
-        return { ...state, cart: [...state.cart, action.payload] };
+        return { ...state, cart: [...state.cart, newItem] };
       }
     case 'SET_CART':
       return { ...state, cart: action.payload };
@@ -299,7 +320,7 @@ const AppContext = createContext<{
     monthlyData: any[];
   };
   // Cart operations
-  addToCart: (product: Product, selectedVariant?: any, quantity?: number) => void;
+  addToCart: (product: Product, selectedVariant?: string, quantity?: number) => void;
   removeFromCart: (itemId: string) => void;
   updateCartQuantity: (itemId: string, quantity: number) => void;
   clearCart: () => void;
@@ -711,46 +732,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   // Cart operations
-  const addToCart = (product: Product, selectedVariant?: any, quantity: number = 1) => {
-    // Vérifier si le produit avec la même variante existe déjà
-    const existingItemIndex = state.cart.findIndex(
-      item => item.product.id === product.id && item.selectedVariant?.id === selectedVariant?.id
-    );
-    
-    if (existingItemIndex >= 0) {
-      // Si l'item existe déjà, augmenter la quantité
-      const updatedCart = [...state.cart];
-      updatedCart[existingItemIndex].quantity += quantity;
-      
-      // Mettre à jour le state
-      dispatch({ 
-        type: 'UPDATE_CART_QUANTITY', 
-        payload: { 
-          id: updatedCart[existingItemIndex].id, 
-          quantity: updatedCart[existingItemIndex].quantity 
-        } 
-      });
-      
-      // Sauvegarder dans localStorage
-      localStorage.setItem('shoesParadise_cart', JSON.stringify(updatedCart));
-      return;
-    }
-    
-    // Si l'item n'existe pas, créer un nouveau
-    const cartItem: CartItem = {
-      id: `${product.id}-${selectedVariant?.id || 'no-variant'}-${Date.now()}`,
-      product,
-      selectedVariant,
-      quantity,
-      addedAt: new Date()
-    };
-    
-    dispatch({ type: 'ADD_TO_CART', payload: cartItem });
+  const addToCart = (product: Product, selectedVariant?: string, quantity: number = 1) => {
+    dispatch({ 
+      type: 'ADD_TO_CART', 
+      payload: { product, quantity, selectedVariant } 
+    });
     
     // Sauvegarder dans localStorage
     setTimeout(() => {
-      const currentCart = JSON.parse(localStorage.getItem('voyagePro_cart') || '[]');
-      const newCart = [...currentCart, cartItem];
       localStorage.setItem('ayoFigurine_cart', JSON.stringify(newCart));
     }, 100);
   };
@@ -785,19 +774,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const getCartTotal = () => {
-    const total = state.cart.reduce((total, item) => {
-      const price = item.product.price;
-      const quantity = typeof item.quantity === 'number' ? item.quantity : 1;
-      return total + (price * quantity);
-    }, 0);
-    return Math.round(total * 100) / 100; // Arrondir à 2 décimales
+    return state.cart.reduce((total, item) => total + (item.price * item.quantity), 0);
   };
 
   const getCartItemsCount = () => {
-    return state.cart.reduce((count, item) => {
-      const quantity = typeof item.quantity === 'number' ? item.quantity : 1;
-      return count + quantity;
-    }, 0);
+    return state.cart.reduce((count, item) => count + item.quantity, 0);
   };
 
   // Charger le panier depuis localStorage au démarrage
@@ -807,10 +788,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       try {
         const cartItems = JSON.parse(savedCart).map((item: any) => ({
           ...item,
-          addedAt: new Date(item.addedAt),
-          quantity: typeof item.quantity === 'number' ? item.quantity : 1
+          addedAt: new Date(item.addedAt)
         }));
-        // Charger tous les items en une seule fois
         dispatch({ type: 'SET_CART', payload: cartItems });
       } catch (error) {
         console.error('Erreur lors du chargement du panier:', error);

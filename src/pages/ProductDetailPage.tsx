@@ -43,13 +43,13 @@ const ProductDetailPage: React.FC = () => {
   const handleAddToCart = () => {
     if (!product) return;
     
-    // Vérifier si une taille est requise et sélectionnée
+    // Vérifier si une taille est requise
     if (product.sizes && product.sizes.length > 0 && !selectedSize) {
       alert('Veuillez sélectionner une taille avant d\'ajouter au panier');
       return;
     }
     
-    addToCart(product, selectedSize, quantity);
+    addToCart(product, selectedSize || '', quantity);
     alert(`${product.name} ajouté au panier !`);
   };
 
