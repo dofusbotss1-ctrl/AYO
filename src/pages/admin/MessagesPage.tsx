@@ -228,7 +228,30 @@ const OrdersPage: React.FC = () => {
                           </div>
                         </div>
                       ) : (
-                        <span className="text-sm text-gray-400 italic">Demande générale</span>
+                        <div className="flex items-center space-x-2">
+                          <input
+                            type="text"
+                            placeholder="Nom du produit"
+                            className="w-32 px-2 py-1 border border-gray-300 rounded text-xs"
+                            onBlur={(e) => {
+                              if (e.target.value.trim()) {
+                                updateMessage(order.id, { productName: e.target.value.trim() });
+                              }
+                            }}
+                          />
+                          <input
+                            type="number"
+                            placeholder="Qté"
+                            min="1"
+                            className="w-16 px-2 py-1 border border-gray-300 rounded text-xs"
+                            onBlur={(e) => {
+                              const qty = parseInt(e.target.value);
+                              if (qty > 0) {
+                                updateMessage(order.id, { quantity: qty });
+                              }
+                            }}
+                          />
+                        </div>
                       )}
                     </td>
 
@@ -303,17 +326,19 @@ const OrdersPage: React.FC = () => {
                                 }
                                 handleStatusChange(order.id, 'confirmed');
                               }}
-                              className="bg-green-500 text-white px-3 py-1 rounded text-xs hover:bg-green-600 transition-colors flex items-center space-x-1"
+                              className="bg-green-500 text-white px-2 py-1 rounded text-xs hover:bg-green-600 transition-colors flex items-center space-x-1"
+                              title="Confirmer la commande"
                             >
                               <CheckCircle className="w-3 h-3" />
-                              <span>Confirmer</span>
+                              <span className="hidden sm:inline">Confirmer</span>
                             </button>
                             <button
                               onClick={() => handleStatusChange(order.id, 'cancelled')}
-                              className="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600 transition-colors flex items-center space-x-1"
+                              className="bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600 transition-colors flex items-center space-x-1"
+                              title="Refuser la commande"
                             >
                               <XCircle className="w-3 h-3" />
-                              <span>Refuser</span>
+                              <span className="hidden sm:inline">Refuser</span>
                             </button>
                           </>
                         )}
@@ -321,10 +346,11 @@ const OrdersPage: React.FC = () => {
                         {order.orderStatus === 'confirmed' && (
                           <button
                             onClick={() => handleStatusChange(order.id, 'sent')}
-                            className="bg-purple-500 text-white px-3 py-1 rounded text-xs hover:bg-purple-600 transition-colors flex items-center space-x-1"
+                            className="bg-purple-500 text-white px-2 py-1 rounded text-xs hover:bg-purple-600 transition-colors flex items-center space-x-1"
+                            title="Marquer comme envoyé"
                           >
                             <Send className="w-3 h-3" />
-                            <span>Envoyer</span>
+                            <span className="hidden sm:inline">Envoyer</span>
                           </button>
                         )}
 
@@ -332,36 +358,97 @@ const OrdersPage: React.FC = () => {
                           <>
                             <button
                               onClick={() => handleStatusChange(order.id, 'delivered')}
-                              className="bg-green-500 text-white px-3 py-1 rounded text-xs hover:bg-green-600 transition-colors flex items-center space-x-1"
+                              className="bg-green-500 text-white px-2 py-1 rounded text-xs hover:bg-green-600 transition-colors flex items-center space-x-1"
+                              title="Marquer comme livré"
                             >
                               <Truck className="w-3 h-3" />
-                              <span>Livré</span>
+                              <span className="hidden sm:inline">Livré</span>
                             </button>
                             <button
                               onClick={() => handleStatusChange(order.id, 'returned')}
-                              className="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600 transition-colors flex items-center space-x-1"
+                              className="bg-orange-500 text-white px-2 py-1 rounded text-xs hover:bg-orange-600 transition-colors flex items-center space-x-1"
+                              title="Marquer comme retourné"
                             >
                               <XCircle className="w-3 h-3" />
-                              <span>Retour</span>
+                              <span className="hidden sm:inline">Retour</span>
                             </button>
                           </>
                         )}
 
+                        {/* Boutons de configuration pour tous les statuts */}
+                        <div className="border-l border-gray-300 pl-2 ml-2 flex items-center space-x-1">
+                          {/* Bouton Modifier le statut */}
+                          <div className="relative group">
+                            <button
+                              className="p-1 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                              title="Modifier le statut"
+                            >
+                              <Edit className="w-3 h-3" />
+                            </button>
+                            <div className="absolute right-0 top-full mt-1 w-40 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
+                              <div className="p-2 space-y-1">
+                                <button
+                                  onClick={() => handleStatusChange(order.id, 'pending')}
+                                  className="w-full text-left px-3 py-2 text-xs hover:bg-yellow-50 rounded flex items-center space-x-2"
+                                >
+                                  <Clock className="w-3 h-3 text-yellow-600" />
+                                  <span>En attente</span>
+                                </button>
+                                <button
+                                  onClick={() => handleStatusChange(order.id, 'confirmed')}
+                                  className="w-full text-left px-3 py-2 text-xs hover:bg-blue-50 rounded flex items-center space-x-2"
+                                >
+                                  <CheckCircle className="w-3 h-3 text-blue-600" />
+                                  <span>Confirmée</span>
+                                </button>
+                                <button
+                                  onClick={() => handleStatusChange(order.id, 'sent')}
+                                  className="w-full text-left px-3 py-2 text-xs hover:bg-purple-50 rounded flex items-center space-x-2"
+                                >
+                                  <Send className="w-3 h-3 text-purple-600" />
+                                  <span>Envoyée</span>
+                                </button>
+                                <button
+                                  onClick={() => handleStatusChange(order.id, 'delivered')}
+                                  className="w-full text-left px-3 py-2 text-xs hover:bg-green-50 rounded flex items-center space-x-2"
+                                >
+                                  <Truck className="w-3 h-3 text-green-600" />
+                                  <span>Livrée</span>
+                                </button>
+                                <button
+                                  onClick={() => handleStatusChange(order.id, 'returned')}
+                                  className="w-full text-left px-3 py-2 text-xs hover:bg-orange-50 rounded flex items-center space-x-2"
+                                >
+                                  <XCircle className="w-3 h-3 text-orange-600" />
+                                  <span>Retournée</span>
+                                </button>
+                                <button
+                                  onClick={() => handleStatusChange(order.id, 'cancelled')}
+                                  className="w-full text-left px-3 py-2 text-xs hover:bg-red-50 rounded flex items-center space-x-2"
+                                >
+                                  <XCircle className="w-3 h-3 text-red-600" />
+                                  <span>Annulée</span>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+
                         {/* Actions communes */}
                         <button
                           onClick={() => setSelectedOrder(order)}
-                          className="text-blue-600 hover:text-blue-800 p-1"
+                          className="p-1 text-gray-600 hover:bg-gray-50 rounded transition-colors"
                           title="Voir détails"
                         >
-                          <Eye className="w-4 h-4" />
+                          <Eye className="w-3 h-3" />
                         </button>
                         <button
                           onClick={() => handleDelete(order.id)}
-                          className="text-red-600 hover:text-red-800 p-1"
+                          className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
                           title="Supprimer"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-3 h-3" />
                         </button>
+                        </div>
                       </div>
                     </td>
                   </tr>

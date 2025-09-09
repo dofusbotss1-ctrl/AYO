@@ -48,6 +48,8 @@ const ContactPage: React.FC = () => {
       message: formData.message,
       deliveryAddress: formData.deliveryAddress || undefined,
       productId: productId,
+      productName: product?.name,
+      quantity: isCartOrder ? state.cart.reduce((total, item) => total + item.quantity, 0) : 1,
       createdAt: new Date(),
       read: false,
     };
