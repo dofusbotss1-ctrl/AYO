@@ -806,7 +806,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       try {
         const cartItems = JSON.parse(savedCart).map((item: any) => ({
           ...item,
-          addedAt: new Date(item.addedAt)
+          addedAt: new Date(item.addedAt),
           quantity: typeof item.quantity === 'number' ? item.quantity : 1
         }));
         // Charger tous les items en une seule fois
