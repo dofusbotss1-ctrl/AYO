@@ -36,7 +36,6 @@ const FinancialPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'overview' | 'charges' | 'investments' | 'revenues'>('overview');
   const [showChargeForm, setShowChargeForm] = useState(false);
   const [showInvestmentForm, setShowInvestmentForm] = useState(false);
-  const [showRevenueForm, setShowRevenueForm] = useState(false);
   const [editingCharge, setEditingCharge] = useState<Charge | null>(null);
   const [editingInvestment, setEditingInvestment] = useState<Investment | null>(null);
 
@@ -62,9 +61,7 @@ const FinancialPage: React.FC = () => {
     source: 'manual' as 'order' | 'manual'
   });
 
-  const financialSummary = getFinancialSummary();
 
-  const handleChargeSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     const chargeData = {
@@ -770,8 +767,3 @@ const FinancialPage: React.FC = () => {
       )}
 
       {/* Revenue Form Modal */}
-    </div>
-  );
-};
-
-export default FinancialPage;
