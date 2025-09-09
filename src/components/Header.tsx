@@ -75,7 +75,7 @@ const Header: React.FC = () => {
               <div className="text-white font-bold text-lg">A</div>
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">
+            to="/products"
                 AYO Figurine
               </h1>
               <p className="text-xs text-gray-500 -mt-1">Premium Collectibles</p>
@@ -375,3 +375,4 @@ const Header: React.FC = () => {
 };
 
 export default Header;
+          to="/products"

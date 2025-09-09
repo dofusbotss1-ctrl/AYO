@@ -793,7 +793,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const getCartItemsCount = () => {
-    return state.cart.reduce((count, item) => count + item.quantity, 0);
+    return state.cart.reduce((count, item) => {
+      const quantity = typeof item.quantity === 'number' ? item.quantity : 1;
+      return count + quantity;
+    }, 0);
   };
 
   // Charger le panier depuis localStorage au démarrage
@@ -804,6 +807,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
         const cartItems = JSON.parse(savedCart).map((item: any) => ({
           ...item,
           addedAt: new Date(item.addedAt)
+          quantity: typeof item.quantity === 'number' ? item.quantity : 1
         }));
         // Charger tous les items en une seule fois
         dispatch({ type: 'SET_CART', payload: cartItems });
