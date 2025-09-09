@@ -94,7 +94,7 @@ const ContactPage: React.FC = () => {
           {/* Contact Form */}
           <div className="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 lg:p-10">
             <h2 className="text-3xl font-bold text-slate-800 mb-8">
-              {isCartOrder ? 'Finaliser la Commande' : product ? `Demande d'information figurine` : 'Contactez votre spécialiste'}
+              {isCartOrder ? 'Finaliser la Commande' : product ? `Demande d'information figurine` : 'Contactez votre spécialiste figurine'}
             </h2>
 
             {isCartOrder && (
@@ -291,7 +291,7 @@ const ContactPage: React.FC = () => {
                     <h4 className="font-bold text-slate-800 mb-2">Adresse</h4>
                     <p className="text-slate-600 leading-relaxed">
                       Casablanca, Maroc<br />
-                      <span className="text-sm text-slate-500">Agence de voyage</span>
+                      <span className="text-sm text-slate-500">Boutique de figurines</span>
                     </p>
                   </div>
                 </div>
@@ -316,7 +316,7 @@ const ContactPage: React.FC = () => {
                   <div>
                     <h4 className="font-bold text-slate-800 mb-2">Email</h4>
                     <p className="text-slate-600">
-                      contact@voyagepro.ma<br />
+                      contact@ayofigurine.ma<br />
                       <span className="text-sm text-slate-500">Réponse sous 2h</span>
                     </p>
                   </div>
@@ -341,7 +341,7 @@ const ContactPage: React.FC = () => {
             <div className="bg-gradient-to-br from-amber-600 to-orange-700 rounded-3xl shadow-2xl p-8 text-white">
               <h3 className="text-2xl font-bold mb-8 flex items-center">
                 <Award className="w-6 h-6 mr-3" />
-                Nos Services Voyage
+                Nos Services Figurines
               </h3>
               <div className="space-y-6">
                 <div className="flex items-center space-x-4">
@@ -358,7 +358,7 @@ const ContactPage: React.FC = () => {
                     <Shield className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-lg">Assurance Voyage</h4>
+                    <h4 className="font-semibold text-lg">Garantie Qualité</h4>
                     <p className="text-amber-100">Garantie qualité pour toutes nos figurines</p>
                   </div>
                 </div>
@@ -390,10 +390,10 @@ const ContactPage: React.FC = () => {
                 </div>
                 <div className="border-l-4 border-orange-500 pl-6">
                   <h4 className="font-bold text-slate-800 mb-2">
-                    Quelle est votre politique d'annulation ?
+                    Quelle est votre politique de retour ?
                   </h4>
                   <p className="text-slate-600">
-                    Annulation gratuite jusqu'à 7 jours avant l'expédition.
+                    Retour gratuit sous 14 jours si la figurine ne vous convient pas.
                   </p>
                 </div>
                 <div className="border-l-4 border-yellow-500 pl-6">

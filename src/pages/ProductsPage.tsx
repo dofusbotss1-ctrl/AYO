@@ -77,8 +77,8 @@ const ProductsPage: React.FC = () => {
               {state.selectedCategory ? getCategoryName(state.selectedCategory) : 'Nos Figurines'}
             </h1>
             <p className="text-xl text-gray-200 max-w-2xl mx-auto">
-              Découvrez {filteredProducts.length} modèle{filteredProducts.length > 1 ? 's' : ''} 
-              {state.selectedCategory ? ` dans la catégorie ${getCategoryName(state.selectedCategory)}` : ' dans notre gamme figurines'}
+              Découvrez {filteredProducts.length} figurine{filteredProducts.length > 1 ? 's' : ''} 
+              {state.selectedCategory ? ` dans la catégorie ${getCategoryName(state.selectedCategory)}` : ' dans notre collection'}
             </p>
             
             {/* Search Bar */}

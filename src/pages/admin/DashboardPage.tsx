@@ -72,8 +72,8 @@ const DashboardPage: React.FC = () => {
 
   const stats = [
     {
-      title: 'Total Voyages',
-      value: state.trips ? state.trips.length : 0,
+      title: 'Total Figurines',
+      value: state.products ? state.products.length : 0,
       icon: Package,
       gradient: 'from-blue-500 to-cyan-600',
       bgGradient: 'from-blue-50 to-cyan-50'
@@ -93,7 +93,7 @@ const DashboardPage: React.FC = () => {
       bgGradient: 'from-teal-50 to-green-50'
     },
     {
-      title: 'Voyages Réservés',
+      title: 'Figurines Commandées',
       value: state.messages ? state.messages.filter(m => m.orderStatus === 'received').length : 0,
       icon: ShoppingBag,
       gradient: 'from-green-500 to-teal-600',
@@ -365,7 +365,7 @@ const DashboardPage: React.FC = () => {
                     ))}
                   </div>
                   <Link
-                    to="/admin/dashboard/products"
+                    to="/admin/dashboard/trips"
                     className="block text-center bg-gradient-to-r from-amber-600 to-orange-600 text-white font-bold py-3 lg:py-4 rounded-2xl mt-8 hover:from-amber-700 hover:to-orange-700 transition-all duration-300 transform hover:scale-105 shadow-lg text-sm lg:text-base"
                   >
                     Voir toutes les figurines

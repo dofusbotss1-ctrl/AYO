@@ -59,7 +59,6 @@ const MessagesPage: React.FC = () => {
   };
 
   const [orderPrice, setOrderPrice] = useState('');
-  const [showPriceInput, setShowPriceInput] = useState(false);
   const handleViewMessage = async (message: ContactMessage) => {
     setSelectedMessage(message);
     if (!message.read) {
@@ -69,8 +68,8 @@ const MessagesPage: React.FC = () => {
 
   const getTripName = (tripId?: string) => {
     if (!tripId) return null;
-    const trip = state.trips.find(t => t.id === tripId);
-    return trip ? trip.destination : 'Voyage supprimé';
+    const product = state.products.find(p => p.id === tripId);
+    return product ? product.name : 'Figurine supprimée';
   };
 
   const unreadCount = state.messages.filter(m => !m.read).length;
@@ -238,23 +237,41 @@ const MessagesPage: React.FC = () => {
                       {selectedMessage.tripId && (
                         <div className="flex items-center space-x-2">
                           <Package className="w-4 h-4" />
-                          <span>Voyage: {getTripName(selectedMessage.tripId)}</span>
+                          <span>Figurine: {getTripName(selectedMessage.tripId)}</span>
                         </div>
                       )}
                       {selectedMessage.orderStatus && (
                         <div className="flex items-center space-x-2">
-                          {selectedMessage.orderStatus === 'sent' && <Send className="w-4 h-4 text-blue-500" />}
+                          {selectedMessage.orderStatus === 'pending' && <div className="w-4 h-4 bg-yellow-500 rounded-full" />}
+                          {selectedMessage.orderStatus === 'confirmed' && <CheckCircle className="w-4 h-4 text-blue-500" />}
+                          {selectedMessage.orderStatus === 'sent' && <Send className="w-4 h-4 text-purple-500" />}
+                          {message.orderStatus === 'confirmed' && <CheckCircle className="w-3 h-3 text-blue-500" />}
+                          {message.orderStatus === 'sent' && <Send className="w-3 h-3 text-purple-500" />}
                           {selectedMessage.orderStatus === 'received' && <CheckCircle className="w-4 h-4 text-green-500" />}
+                          {selectedMessage.orderStatus === 'returned' && <XCircle className="w-4 h-4 text-red-500" />}
+                          {message.orderStatus === 'returned' && <XCircle className="w-3 h-3 text-red-500" />}
                           {selectedMessage.orderStatus === 'cancelled' && <XCircle className="w-4 h-4 text-red-500" />}
                           <span className={`${
-                            selectedMessage.orderStatus === 'sent' ? 'text-blue-600' :
+                            selectedMessage.orderStatus === 'pending' ? 'text-yellow-600' :
+                            selectedMessage.orderStatus === 'confirmed' ? 'text-blue-600' :
+                            selectedMessage.orderStatus === 'sent' ? 'text-purple-600' :
+                            message.orderStatus === 'confirmed' ? 'text-blue-600' :
+                            message.orderStatus === 'sent' ? 'text-purple-600' :
                             selectedMessage.orderStatus === 'received' ? 'text-green-600' :
+                            selectedMessage.orderStatus === 'returned' ? 'text-red-600' :
+                            message.orderStatus === 'returned' ? 'text-red-600' :
                             'text-red-600'
                           }`}>
-                            Statut: {selectedMessage.orderStatus === 'sent' ? 'Devis envoyé' :
+                            Statut: {selectedMessage.orderStatus === 'pending' ? 'Commande en attente' :
+                                   selectedMessage.orderStatus === 'confirmed' ? 'Commande confirmée' :
+                                   selectedMessage.orderStatus === 'sent' ? 'Commande envoyée' :
+                             message.orderStatus === 'confirmed' ? 'Commande confirmée' :
+                             message.orderStatus === 'sent' ? 'Commande envoyée' :
                                    selectedMessage.orderStatus === 'received' ? 'Commande reçue' :
+                                   selectedMessage.orderStatus === 'returned' ? 'Commande retournée' :
+                             message.orderStatus === 'returned' ? 'Commande retournée' :
                                    'Commande annulée'}
-                            {selectedMessage.orderPrice && ` - ${selectedMessage.orderPrice} DH`}
+                            {getTripName(message.tripId)}
                           </span>
                         </div>
                       )}
@@ -300,27 +317,27 @@ const MessagesPage: React.FC = () => {
                 {/* Trip Info if applicable */}
                 {selectedMessage.tripId && (
                   <div className="mt-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Voyage concerné:</h3>
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Figurine concernée:</h3>
                     {(() => {
-                      const trip = state.trips.find(t => t.id === selectedMessage.tripId);
-                      if (trip) {
+                      const product = state.products.find(p => p.id === selectedMessage.tripId);
+                      if (product) {
                         return (
                           <div className="bg-emerald-50 rounded-lg p-4 flex items-center space-x-4">
                             <img
-                              src={trip.images[0]}
-                              alt={trip.destination}
+                              src={product.images[0]}
+                              alt={product.name}
                               className="w-16 h-16 object-cover rounded-lg"
                             />
                             <div>
-                              <h4 className="font-medium text-gray-800">{trip.destination}</h4>
-                              <p className="text-emerald-600 font-semibold">{trip.price} DH</p>
+                              <h4 className="font-medium text-gray-800">{product.name}</h4>
+                              <p className="text-emerald-600 font-semibold">{product.price} DH</p>
                               <a
-                                href={`/trip/${trip.id}`}
+                                href={`/product/${product.id}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-sm text-emerald-600 hover:text-emerald-700"
                               >
-                                Voir le voyage →
+                                Voir la figurine →
                               </a>
                             </div>
                           </div>
@@ -328,7 +345,7 @@ const MessagesPage: React.FC = () => {
                       } else {
                         return (
                           <div className="bg-gray-50 rounded-lg p-4">
-                            <p className="text-gray-600">Voyage supprimé ou introuvable</p>
+                            <p className="text-gray-600">Figurine supprimée ou introuvable</p>
                           </div>
                         );
                       }
@@ -341,84 +358,67 @@ const MessagesPage: React.FC = () => {
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">Actions:</h3>
                   
                   {/* Order Management */}
-                  {!selectedMessage.orderStatus && (
+                  {selectedMessage.orderStatus === 'pending' && (
                     <div className="mb-6 p-4 bg-cyan-50 border border-cyan-200 rounded-lg">
-                      <h4 className="font-medium text-cyan-800 mb-3">Gestion de la réservation:</h4>
+                      <h4 className="font-medium text-cyan-800 mb-3">Gestion de la commande:</h4>
                       <div className="flex flex-wrap gap-3">
                         <button
-                          onClick={() => setShowPriceInput(true)}
-                          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center space-x-2"
+                          onClick={() => handleOrderStatusChange(selectedMessage.id, 'confirmed')}
+                          className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors flex items-center space-x-2"
                         >
-                          <Send className="w-4 h-4" />
-                          <span>Envoyer devis</span>
+                          <CheckCircle className="w-4 h-4" />
+                          <span>Confirmer commande</span>
                         </button>
                         <button
                           onClick={() => handleOrderStatusChange(selectedMessage.id, 'cancelled')}
                           className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors flex items-center space-x-2"
                         >
                           <XCircle className="w-4 h-4" />
-                          <span>Client refuse</span>
+                          <span>Rejeter commande</span>
                         </button>
                       </div>
-                      
-                      {showPriceInput && (
-                        <div className="mt-4 p-3 bg-white border rounded-lg">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Prix de la réservation (DH):
-                          </label>
-                          <div className="flex space-x-2">
-                            <input
-                              type="number"
-                              value={orderPrice}
-                              onChange={(e) => setOrderPrice(e.target.value)}
-                              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
-                              placeholder="Prix en DH"
-                            />
-                            <button
-                              onClick={() => {
-                                if (orderPrice) {
-                                  handleOrderStatusChange(selectedMessage.id, 'sent', parseFloat(orderPrice));
-                                  setOrderPrice('');
-                                  setShowPriceInput(false);
-                                }
-                              }}
-                              className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
-                            >
-                              Confirmer
-                            </button>
-                            <button
-                              onClick={() => {
-                                setShowPriceInput(false);
-                                setOrderPrice('');
-                              }}
-                              className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors"
-                            >
-                              Annuler
-                            </button>
-                          </div>
-                        </div>
-                      )}
                     </div>
                   )}
                   
-                  {/* Order Status Actions */}
-                  {selectedMessage.orderStatus === 'sent' && (
+                  {selectedMessage.orderStatus === 'confirmed' && (
                     <div className="mb-6 p-4 bg-teal-50 border border-teal-200 rounded-lg">
-                      <h4 className="font-medium text-teal-800 mb-3">Devis envoyé - Actions:</h4>
+                      <h4 className="font-medium text-teal-800 mb-3">Commande confirmée - Actions:</h4>
+                      <div className="flex space-x-3">
+                        <button
+                          onClick={() => handleOrderStatusChange(selectedMessage.id, 'sent')}
+                          className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors flex items-center space-x-2"
+                        >
+                          <Send className="w-4 h-4" />
+                          <span>Envoyer commande</span>
+                        </button>
+                        <button
+                          onClick={() => handleOrderStatusChange(selectedMessage.id, 'cancelled')}
+                          className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors flex items-center space-x-2"
+                        >
+                          <XCircle className="w-4 h-4" />
+                          <span>Annuler commande</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {selectedMessage.orderStatus === 'sent' && (
+                    <div className="mb-6 p-4 bg-purple-50 border border-purple-200 rounded-lg">
+                      <h4 className="font-medium text-purple-800 mb-3">Commande envoyée - Actions:</h4>
                       <div className="flex space-x-3">
                         <button
                           onClick={() => handleOrderStatusChange(selectedMessage.id, 'received')}
                           className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors flex items-center space-x-2"
                         >
                           <CheckCircle className="w-4 h-4" />
-                          <span>Réservation confirmée</span>
+                          <span>Commande reçue</span>
                         </button>
                         <button
-                          onClick={() => handleOrderStatusChange(selectedMessage.id, 'cancelled')}
+                          onClick={() => handleOrderStatusChange(selectedMessage.id, 'returned')}
                           className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors flex items-center space-x-2"
                         >
-                          <ArrowLeft className="w-4 h-4" />
-                          <span>Réservation annulée</span>
+                          <XCircle className="w-4 h-4" />
+                          <span>Commande retournée</span>
                         </button>
                       </div>
                     </div>
@@ -426,7 +426,7 @@ const MessagesPage: React.FC = () => {
                   
                   <div className="flex space-x-4">
                     <a
-                      href={`mailto:${selectedMessage.email}?subject=Re: Votre demande chez VoyagePro`}
+                      href={`mailto:${selectedMessage.email}?subject=Re: Votre commande chez AYO Figurine`}
                       className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-6 py-3 rounded-lg hover:from-emerald-700 hover:to-teal-700 transition-colors flex items-center space-x-2 shadow-lg"
                     >
                       <Mail className="w-5 h-5" />

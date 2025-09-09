@@ -519,6 +519,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   const clearCart = () => {
     dispatch({ type: 'CLEAR_CART' });
     localStorage.removeItem('ayoFigurine_cart');
+    console.log('Panier vidé avec succès');
   };
 
   const getCartTotal = () => {

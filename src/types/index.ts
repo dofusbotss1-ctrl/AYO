@@ -42,7 +42,7 @@ export interface ContactMessage {
   productId?: string;
   createdAt: Date;
   read: boolean;
-  orderStatus?: 'pending' | 'sent' | 'received' | 'cancelled';
+  orderStatus?: 'pending' | 'confirmed' | 'sent' | 'received' | 'returned' | 'cancelled';
   orderPrice?: number;
 }
 
